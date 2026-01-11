@@ -1,407 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Mirrored from eng1-c1g11.github.io/crc-card-table.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 11 Jan 2026 14:20:54 GMT -->
-<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>CRC Card Tables | ENG1-C1G11</title>
-<meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="CRC Card Tables" />
-<meta property="og:locale" content="en_US" />
-<link rel="canonical" href="crc-card-table.html" />
-<meta property="og:url" content="crc-card-table.html" />
-<meta property="og:site_name" content="ENG1-C1G11" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="CRC Card Tables" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","headline":"CRC Card Tables","url":"https://eng1-c1g11.github.io/crc-card-table.html"}</script>
-<!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="assets/main.css"><link type="application/atom+xml" rel="alternate" href="feed.xml" title="ENG1-C1G11" /></head>
-<body><header class="site-header" role="banner">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <div class="wrapper"><a class="site-title" rel="author" href="index.html">ENG1-C1G11</a><nav class="site-nav">
-        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-        <label for="nav-trigger">
-          <span class="menu-icon">
-            <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
-            </svg>
-          </span>
-        </label>
+  <title>CRC Card Tables | ENG1-C1G5</title>
 
-        <div class="trigger"><a class="page-link" href="index.html">Home Page</a><a class="page-link" href="key-talking-points.html">Technical Information</a><a class="page-link" href="architecture/index.html">Architecture</a><a class="page-link" href="architecture-diagrams/index.html">Architecture Diagrams</a><a class="page-link" href="architecture-previous-version-behaviour-diagram.html">Behaviour Diagram Version History</a><a class="page-link" href="architecture-previous-version-structural-diagrams.html">Structural Diagram Version History</a><a class="page-link" href="crc-card-table.html">CRC Card Tables</a><a class="page-link" href="gantt-chart.html">Gantt Chart</a><a class="page-link" href="weekly-tasks.html">Weekly Tasks</a><a class="page-link" href="diagram-code.html">PlantUML Diagrams</a><a class="page-link" href="support.html">Support</a></div>
-      </nav></div>
-</header>
-<main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post">
+  <meta property="og:title" content="CRC Card Tables" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="ENG1-C1G5" />
+  <meta property="og:type" content="website" />
 
-  <header class="post-header">
-    <h1 class="post-title">CRC Card Tables</h1>
-  </header>
+  <!-- Relative-safe URLs -->
+  <link rel="canonical" href="./crc-card-table.html" />
+  <meta property="og:url" content="./crc-card-table.html" />
 
-  <div class="post-content">
-    <p>We used Class-Responsibility-Collaborator (CRC) cards to plan how different parts of our game fit together in the Entity-Component-System (ECS) architecture.<br />
-Each CRC card explains what something does (its responsibility) and who it works with (its collaborators).</p>
+  <link rel="stylesheet" href="assets/main.css" />
+  <link rel="alternate" type="application/atom+xml" href="feed.xml" title="ENG1-C1G5" />
+</head>
 
-<p>Our ECS approach splits the game into:</p>
-<ul>
-  <li><strong>Components</strong> -&gt; store data</li>
-  <li><strong>Systems</strong> -&gt; handle behaviour and logic</li>
-  <li><strong>Messages</strong> -&gt; let different systems talk to each other</li>
-</ul>
-
-<p>This makes it easier to add new features or change old ones without breaking everything else.</p>
-
-<h2 id="components">Components</h2>
-
-<p>These are the data bits attached to entities. They don’t do anything on their own - the systems read from them and update them.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibilities</th>
-      <th>Collaborators</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>CameraFollowComponent</strong></td>
-      <td>Tells the camera which entity to follow (usually the player).</td>
-      <td>WorldCameraSystem, TransformComponent</td>
-    </tr>
-    <tr>
-      <td><strong>GooseComponent</strong></td>
-      <td>Stores info for the goose enemy, like if it’s chasing the player or patrolling.</td>
-      <td>GooseSystem, TransformComponent, PhysicsComponent, PlayerComponent</td>
-    </tr>
-    <tr>
-      <td><strong>InteractableComponent</strong></td>
-      <td>Marks an object as interactable (like a button, switch, or collectible). Can also send messages or disappear when used.</td>
-      <td>InteractableSystem, MessagePublisher, PlayerComponent</td>
-    </tr>
-    <tr>
-      <td><strong>PhysicsComponent</strong></td>
-      <td>Holds the Box2D body and its physics settings (mass, type, shape, etc.).</td>
-      <td>PhysicsSystem, PhysicsSyncSystem, PhysicsToTransformSystem</td>
-    </tr>
-    <tr>
-      <td><strong>PlayerComponent</strong></td>
-      <td>Keeps track of player movement direction, speed, and animation state.</td>
-      <td>PlayerSystem, PhysicsComponent, AnimationComponent, TransformComponent</td>
-    </tr>
-    <tr>
-      <td><strong>SpriteComponent</strong></td>
-      <td>Contains the texture and render layer for drawing on screen.</td>
-      <td>RenderingSystem, RenderOrderComparator, TransformComponent</td>
-    </tr>
-    <tr>
-      <td><strong>TimerComponent</strong></td>
-      <td>A simple countdown timer that sends a message when it finishes.</td>
-      <td>TimerSystem, MessagePublisher</td>
-    </tr>
-    <tr>
-      <td><strong>TransformComponent</strong></td>
-      <td>Stores an entity’s position, rotation, and scale. Used by nearly every system.</td>
-      <td>PhysicsToTransformSystem, RenderingSystem, CameraFollowComponent, PlayerSystem</td>
-    </tr>
-    <tr>
-      <td><strong>AnimationComponent</strong></td>
-      <td>Keeps track of animation state, current clip, and frame speed.</td>
-      <td>RenderingSystem, PlayerSystem, AssetLoader</td>
-    </tr>
-    <tr>
-      <td><strong>AudioListenerComponent</strong></td>
-      <td>Marks which entity the audio listener follows (usually the player).</td>
-      <td>AudioSystem, TransformComponent</td>
-    </tr>
-    <tr>
-      <td><strong>HiddenWallComponent</strong></td>
-      <td>For walls that appear or disappear when triggered.</td>
-      <td>HiddenWallSystem, InteractableSystem, MessagePublisher</td>
-      <tr>
-      <td><strong>NpcComponent</strong></td>
-      <td>Stores the state machine state that the different NPCs are in</td>
-      <td>IteratingFixedStepSystem</td>
-    </tr>
-  </tbody>
-</table>
-
-<hr />
-
-<h2 id="systems">Systems</h2>
-
-<p>These handle the behaviour and logic. Each one focuses on a single job, like physics, input, rendering, or audio.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibilities</th>
-      <th>Collaborators</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>PlayerSystem</strong></td>
-      <td>Reads player input, moves the character, and updates animations or sounds.</td>
-      <td>PlayerComponent, PhysicsComponent, AnimationComponent, AudioSystem</td>
-    </tr>
-    <tr>
-      <td><strong>PhysicsSystem</strong></td>
-      <td>Runs Box2D physics at a fixed timestep to keep movement smooth and stable.</td>
-      <td>PhysicsComponent, TransformComponent, SafeBodyDestroy, MessagePublisher</td>
-    </tr>
-    <tr>
-      <td><strong>PhysicsSyncSystem</strong></td>
-      <td>Syncs transforms with physics bodies after updates.</td>
-      <td>TransformComponent, PhysicsComponent</td>
-    </tr>
-    <tr>
-      <td><strong>PhysicsToTransformSystem</strong></td>
-      <td>Copies body positions from Box2D to the entity transforms before rendering.</td>
-      <td>TransformComponent, PhysicsComponent, RenderingSystem</td>
-    </tr>
-    <tr>
-      <td><strong>RenderingSystem</strong></td>
-      <td>Draws all sprites and animations in the correct order (based on Y-position and layer).</td>
-      <td>SpriteComponent, AnimationComponent, TransformComponent, RenderOrderComparator</td>
-    </tr>
-    <tr>
-      <td><strong>AudioSystem</strong></td>
-      <td>Plays sounds in response to messages (like footsteps, goose bites, or the victory sound).</td>
-      <td>AudioListenerComponent, SoundMessage, WorldSoundMessage, MessagePublisher</td>
-    </tr>
-    <tr>
-      <td><strong>HiddenWallSystem</strong></td>
-      <td>Toggles hidden walls when it receives the right trigger message.</td>
-      <td>HiddenWallComponent, MessagePublisher, InteractableSystem</td>
-    </tr>
-    <tr>
-      <td><strong>InteractableSystem</strong></td>
-      <td>Checks if the player interacts with an object and sends out messages (like collecting an item).</td>
-      <td>InteractableComponent, PlayerComponent, MessagePublisher</td>
-    </tr>
-    <tr>
-      <td><strong>GooseSystem</strong></td>
-      <td>Controls the goose AI - handles chasing the player and reacting to collisions.</td>
-      <td>GooseComponent, PlayerComponent, MessagePublisher</td>
-    </tr>
-    <tr>
-      <td><strong>TimerSystem</strong></td>
-      <td>Counts down timers and fires messages when they expire.</td>
-      <td>TimerComponent, MessagePublisher</td>
-    </tr>
-    <tr>
-      <td><strong>WorldCameraSystem</strong></td>
-      <td>Makes the camera follow an entity with a CameraFollowComponent.</td>
-      <td>CameraFollowComponent, TransformComponent</td>
-    </tr>
-    <tr>
-      <td><strong>GameStateSystem</strong></td>
-      <td>Checks win or lose conditions and shows end screens or messages.</td>
-      <td>ScoreCard, MessagePublisher, GameOverScreen, WinScreen</td>
-    </tr>
-    <tr>
-      <td><strong>SurveyorSystem</strong></td>
-      <td>Manages the surveyor entity that interrupts the player with a survey.</td>
-      <td>ChaserComponent, OpenSurveyMessage, TransformComponent, PhysicsComponent, InteractableMessage, AnimationComponent</td>
-    </tr>
-    <tr>
-      <td><strong>LecturerSystem</strong></td>
-      <td>Manages the Lecturer entity which chases the player and, if they're caught, traps them for a set time.</td>
-      <td>ChaserComponent, TransformComponent, PhysicsComponent, InteractableComponent, AnimationComponent</td>
-    </tr>
-    <tr>
-      <td><strong>ScoreCardSystem</strong></td>
-      <td>Stores teh score the player achieved and an element-by-element breakdown.</td>
-      <td>EventCounterSystem</td>
-    </tr>
-    <tr>
-      <td><strong>AchievementSystem</strong></td>
-      <td>Adds achievements to a HashSet and stores the achievements scored.</td>
-      <td>AchievementMessage</td>
-    </tr>
-    <tr>
-      <td><strong>EventCounterSystem</strong></td>
-      <td>Keeps count of the number of events and can output a score summary.</td>
-      <td>ScoreCardSystem</td>
-    </tr>
-    <tr>
-      <td><strong>MetaGameState</strong></td>
-      <td>Tracks the output of game sysetems, like high scores.</td>
-      <td>ScoreCardSystem, AchievementSystem</td>
-  </tbody>
-</table>
-
-<hr />
-
-<h2 id="messages-and-other-helpers">Messages and Other Helpers</h2>
-
-<p>These are the classes that connect systems together and handle smaller jobs like asset loading and sorting.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibilities</th>
-      <th>Collaborators</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Message</strong></td>
-      <td>The base class for sending events around the game.</td>
-      <td>MessagePublisher, MessageListener</td>
-    </tr>
-    <tr>
-      <td><strong>MessagePublisher</strong></td>
-      <td>Sends messages to anything that’s subscribed.</td>
-      <td>All Systems</td>
-    </tr>
-    <tr>
-      <td><strong>MessageListener</strong></td>
-      <td>Used by systems that need to react to messages.</td>
-      <td>MessagePublisher, various Systems</td>
-    </tr>
-    <tr>
-      <td><strong>MessageType</strong></td>
-      <td>Enum of different message categories (SOUND, INTERACT, LEVEL_COMPLETE, etc.).</td>
-      <td>All message subclasses</td>
-    </tr>
-    <tr>
-      <td><strong>CollisionConverter</strong></td>
-      <td>Converts Box2D collision events into game messages.</td>
-      <td>PhysicsSystem, InteractableSystem</td>
-    </tr>
-    <tr>
-      <td><strong>AssetLoader</strong></td>
-      <td>Loads and manages textures, sounds, and fonts.</td>
-      <td>RenderingSystem, AudioSystem, EntityMaker</td>
-    </tr>
-    <tr>
-      <td><strong>EntityMaker</strong></td>
-      <td>Builds entities by attaching the right components.</td>
-      <td>AssetLoader, all Components</td>
-    </tr>
-    <tr>
-      <td><strong>FixedStepper / FixedStepSystem</strong></td>
-      <td>Keeps physics and timer updates consistent regardless of frame rate.</td>
-      <td>PhysicsSystem, TimerSystem</td>
-    </tr>
-    <tr>
-      <td><strong>SafeBodyDestroy</strong></td>
-      <td>Queues up physics bodies for safe removal (prevents Box2D errors).</td>
-      <td>PhysicsSystem</td>
-    </tr>
-    <tr>
-      <td><strong>RenderOrderComparator</strong></td>
-      <td>Sorts entities for proper drawing order (layer then Y-position).</td>
-      <td>RenderingSystem, SpriteComponent</td>
-    </tr>
-    <tr>
-      <td><strong>EventCounter / ScoreCard</strong></td>
-      <td>Tracks score and progress for the game state logic.</td>
-      <td>GameStateSystem</td>
-    </tr>
-    <tr>
-      <td><strong>FontGenerator</strong></td>
-      <td>Creates fonts used in the menus and HUD.</td>
-      <td>BaseMenuScreen, LevelScreen</td>
-    </tr>
-    <tr>
-      <td><strong>OpenSurveyMessage</strong></td>
-      <td>Sent whenever the player interacts with the surveyor student.</td>
-      <td>SurveyorSystem, InteractableMessage</td>
-    </tr>
-    <tr>
-      <td><strong>AchievementMessage</strong></td>
-      <td>Requests an achivement to be saved to the game.</td>
-      <td>AchivementSystem, MessageSystem</td>
-    </tr>
-    <tr>
-      <td><strong>LectureMessage</strong></td>
-      <td>Sent whenever the player interacts with the lecturer.</td>
-      <td>LecturerSystem, InteractableMessage</td>
-    </tr>
-    <tr>
-      <td><strong>InteractableMessage</strong></td>
-      <td>Represents a message generated by an interactable object the player collides with.</td>
-      <td>Message, OpenSurveyMessage, LectureMessage</td>
-    </tr>
-    <tr>
-      <td><strong>CollisionMessage</strong></td>
-      <td>Sent when two objects start colliding in the physics engine.</td>
-      <td>Message</td>
-    </tr>
-  </tbody>
-</table>
-
-<hr />
-
-<h2 id="why-we-used-crc-cards">Why We Used CRC Cards</h2>
-
-<p>Making CRC cards helped us figure out what each part of the game should be responsible for.<br />
-It stopped us from putting too much logic into one system and made it easier for everyone on the team to see how things connected.</p>
-
-<p>They also helped us link our requirements to the actual code. For example:</p>
-
-<ul>
-  <li>
-    <p><strong>Door and pressure plate feature:</strong><br />
-Done with InteractableComponent, InteractableSystem, and HiddenWallSystem.<br />
-When the player steps on the plate, a PressurePlateTriggerMessage tells the wall to open.</p>
-  </li>
-  <li>
-    <p><strong>Audio feedback:</strong><br />
-Done through the AudioSystem, which plays sounds when it receives SoundMessage or WorldSoundMessage.</p>
-  </li>
-</ul>
-
-<hr />
-
-<h2 id="notes">Notes</h2>
-
-<p>Making these cards early on was really helpful. It let us spot overlap between systems and simplify the design.
-For example, we originally put the camera logic in PlayerSystem, but moving it into a separate WorldCameraSystem made things much cleaner.</p>
-
-<p>Overall, the CRC cards gave us a simple way to plan and communicate how everything fits together in our ECS design.</p>
-
-  </div>
-
-</article>
-
-      </div>
-    </main><footer class="site-footer h-card">
-  <data class="u-url" href="index.html"></data>
-
+<body>
+<header class="site-header" role="banner">
   <div class="wrapper">
+    <a class="site-title" rel="author" href="index.html">ENG1-C1G5</a>
 
-    <h2 class="footer-heading">ENG1-C1G11</h2>
-
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li class="p-name">ENG1-C1G11</li></ul>
+    <nav class="site-nav">
+      <div class="trigger">
+        <a class="page-link" href="index.html">Home Page</a>
+        <a class="page-link" href="key-talking-points.html">Technical Information</a>
+        <a class="page-link" href="architecture/index.html">Architecture</a>
+        <a class="page-link" href="architecture-diagrams/index.html">Architecture Diagrams</a>
+        <a class="page-link" href="crc-card-table.html">CRC Card Tables</a>
+        <a class="page-link" href="gantt-chart.html">Gantt Chart</a>
       </div>
-
-      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
-</div>
-
-      <div class="footer-col footer-col-3">
-        <p></p>
-      </div>
-    </div>
-
+    </nav>
   </div>
+</header>
 
+<main class="page-content" aria-label="Content">
+  <div class="wrapper">
+    <article class="post">
+
+      <header class="post-header">
+        <h1 class="post-title">CRC Card Tables</h1>
+      </header>
+
+      <div class="post-content">
+        <p>We used Class-Responsibility-Collaborator (CRC) cards to plan how different parts of our game fit together in the Entity-Component-System (ECS) architecture.<br />
+        Each CRC card explains what something does (its responsibility) and who it works with (its collaborators).</p>
+
+        <p>Our ECS approach splits the game into:</p>
+        <ul>
+          <li><strong>Components</strong> -&gt; store data</li>
+          <li><strong>Systems</strong> -&gt; handle behaviour and logic</li>
+          <li><strong>Messages</strong> -&gt; let different systems talk to each other</li>
+        </ul>
+
+        <p>This makes it easier to add new features or change old ones without breaking everything else.</p>
+
+        <h2 id="components">Components</h2>
+
+        <p>These are the data bits attached to entities. They don’t do anything on their own - the systems read from them and update them.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Responsibilities</th>
+              <th>Collaborators</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>CameraFollowComponent</strong></td>
+              <td>Tells the camera which entity to follow (usually the player).</td>
+              <td>WorldCameraSystem, TransformComponent</td>
+            </tr>
+            <tr>
+              <td><strong>ChaserComponent</strong></td>
+              <td>Stores info for any Chaser entity, such as whether it's chasing the player or patrolling.</td>
+              <td>GooseSystem, TransformComponent, PhysicsComponent, PlayerComponent</td>
+            </tr>
+            <tr>
+              <td><strong>InteractableComponent</strong></td>
+              <td>Marks an object as interactable (like a button, switch, or collectible). Can also send messages or disappear when used.</td>
+              <td>InteractableSystem, MessagePublisher, PlayerComponent, LecturerSystem, SurveyorSystem</td>
+            </tr>
+            <tr>
+              <td><strong>PhysicsComponent</strong></td>
+              <td>Holds the Box2D body and its physics settings (mass, type, shape, etc.).</td>
+              <td>PhysicsSystem, PhysicsSyncSystem, PhysicsToTransformSystem</td>
+            </tr>
+            <tr>
+              <td><strong>PlayerComponent</strong></td>
+              <td>Keeps track of player movement direction, speed, and animation state.</td>
+              <td>PlayerSystem, PhysicsComponent, AnimationComponent, TransformComponent</td>
+            </tr>
+            <tr>
+              <td><strong>SpriteComponent</strong></td>
+              <td>Contains the texture and render layer for drawing on screen.</td>
+              <td>RenderingSystem, RenderOrderComparator, TransformComponent</td>
+            </tr>
+            <tr>
+              <td><strong>TimerComponent</strong></td>
+              <td>A simple countdown timer that sends a message when it finishes.</td>
+              <td>TimerSystem, MessagePublisher</td>
+            </tr>
+            <tr>
+              <td><strong>TransformComponent</strong></td>
+              <td>Stores an entity’s position, rotation, and scale. Used by nearly every system.</td>
+              <td>PhysicsToTransformSystem, RenderingSystem, CameraFollowComponent, PlayerSystem</td>
+            </tr>
+            <tr>
+              <td><strong>AnimationComponent</strong></td>
+              <td>Keeps track of animation state, current clip, and frame speed.</td>
+              <td>RenderingSystem, PlayerSystem, AssetLoader</td>
+            </tr>
+            <tr>
+              <td><strong>AudioListenerComponent</strong></td>
+              <td>Marks which entity the audio listener follows (usually the player).</td>
+              <td>AudioSystem, TransformComponent</td>
+            </tr>
+            <tr>
+              <td><strong>HiddenWallComponent</strong></td>
+              <td>For walls that appear or disappear when triggered.</td>
+              <td>HiddenWallSystem, InteractableSystem, MessagePublisher</td>
+            </tr>
+            <tr>
+              <td><strong>NpcComponent</strong></td>
+              <td>Stores the state machine state that the different NPCs are in</td>
+              <td>IteratingFixedStepSystem</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr />
+
+        <h2 id="systems">Systems</h2>
+
+        <p>These handle the behaviour and logic. Each one focuses on a single job, like physics, input, rendering, or audio.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Responsibilities</th>
+              <th>Collaborators</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>PlayerSystem</strong></td>
+              <td>Reads player input, moves the character, and updates animations or sounds.</td>
+              <td>PlayerComponent, PhysicsComponent, AnimationComponent, AudioSystem</td>
+            </tr>
+            <tr>
+              <td><strong>PhysicsSystem</strong></td>
+              <td>Runs Box2D physics at a fixed timestep to keep movement smooth and stable.</td>
+              <td>PhysicsComponent, TransformComponent, SafeBodyDestroy, MessagePublisher</td>
+            </tr>
+            <tr>
+              <td><strong>PhysicsSyncSystem</strong></td>
+              <td>Syncs transforms with physics bodies after updates.</td>
+              <td>TransformComponent, PhysicsComponent</td>
+            </tr>
+            <tr>
+              <td><strong>PhysicsToTransformSystem</strong></td>
+              <td>Copies body positions from Box2D to the entity transforms before rendering.</td>
+              <td>TransformComponent, PhysicsComponent, RenderingSystem</td>
+            </tr>
+            <tr>
+              <td><strong>RenderingSystem</strong></td>
+              <td>Draws all sprites and animations in the correct order (based on Y-position and layer).</td>
+              <td>SpriteComponent, AnimationComponent, TransformComponent, RenderOrderComparator</td>
+            </tr>
+            <tr>
+              <td><strong>AudioSystem</strong></td>
+              <td>Plays sounds in response to messages (like footsteps, goose bites, or the victory sound).</td>
+              <td>AudioListenerComponent, SoundMessage, WorldSoundMessage, MessagePublisher</td>
+            </tr>
+            <tr>
+              <td><strong>HiddenWallSystem</strong></td>
+              <td>Toggles hidden walls when it receives the right trigger message.</td>
+              <td>HiddenWallComponent, MessagePublisher, InteractableSystem</td>
+            </tr>
+            <tr>
+              <td><strong>InteractableSystem</strong></td>
+              <td>Checks if the player interacts with an object and sends out messages (like collecting an item).</td>
+              <td>InteractableComponent, PlayerComponent, MessagePublisher</td>
+            </tr>
+            <tr>
+              <td><strong>GooseSystem</strong></td>
+              <td>Controls the goose AI - handles chasing the player and reacting to collisions.</td>
+              <td>GooseComponent, PlayerComponent, MessagePublisher</td>
+            </tr>
+            <tr>
+              <td><strong>TimerSystem</strong></td>
+              <td>Counts down timers and fires messages when they expire.</td>
+              <td>TimerComponent, MessagePublisher</td>
+            </tr>
+            <tr>
+              <td><strong>WorldCameraSystem</strong></td>
+              <td>Makes the camera follow an entity with a CameraFollowComponent.</td>
+              <td>CameraFollowComponent, TransformComponent</td>
+            </tr>
+            <tr>
+              <td><strong>GameStateSystem</strong></td>
+              <td>Checks win or lose conditions and shows end screens or messages.</td>
+              <td>ScoreCard, MessagePublisher, GameOverScreen, WinScreen</td>
+            </tr>
+            <tr>
+              <td><strong>SurveyorSystem</strong></td>
+              <td>Manages the surveyor entity that interrupts the player with a survey.</td>
+              <td>ChaserComponent, OpenSurveyMessage, TransformComponent, PhysicsComponent, InteractableMessage, AnimationComponent</td>
+            </tr>
+            <tr>
+              <td><strong>LecturerSystem</strong></td>
+              <td>Manages the Lecturer entity which chases the player and, if they're caught, traps them for a set time.</td>
+              <td>ChaserComponent, TransformComponent, PhysicsComponent, InteractableComponent, AnimationComponent</td>
+            </tr>
+            <tr>
+              <td><strong>ScoreCardSystem</strong></td>
+              <td>Stores teh score the player achieved and an element-by-element breakdown.</td>
+              <td>EventCounterSystem</td>
+            </tr>
+            <tr>
+              <td><strong>AchievementSystem</strong></td>
+              <td>Adds achievements to a HashSet and stores the achievements scored.</td>
+              <td>AchievementMessage</td>
+            </tr>
+            <tr>
+              <td><strong>EventCounterSystem</strong></td>
+              <td>Keeps count of the number of events and can output a score summary.</td>
+              <td>ScoreCardSystem</td>
+            </tr>
+            <tr>
+              <td><strong>MetaGameState</strong></td>
+              <td>Tracks the output of game sysetems, like high scores.</td>
+              <td>ScoreCardSystem, AchievementSystem</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr />
+
+        <h2 id="messages-and-other-helpers">Messages and Other Helpers</h2>
+
+        <p>These are the classes that connect systems together and handle smaller jobs like asset loading and sorting.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Responsibilities</th>
+              <th>Collaborators</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Message</strong></td>
+              <td>The base class for sending events around the game.</td>
+              <td>MessagePublisher, MessageListener</td>
+            </tr>
+            <tr>
+              <td><strong>MessagePublisher</strong></td>
+              <td>Sends messages to anything that’s subscribed.</td>
+              <td>All Systems</td>
+            </tr>
+            <tr>
+              <td><strong>MessageListener</strong></td>
+              <td>Used by systems that need to react to messages.</td>
+              <td>MessagePublisher, various Systems</td>
+            </tr>
+            <tr>
+              <td><strong>MessageType</strong></td>
+              <td>Enum of different message categories (SOUND, INTERACT, LEVEL_COMPLETE, etc.).</td>
+              <td>All message subclasses</td>
+            </tr>
+            <tr>
+              <td><strong>CollisionConverter</strong></td>
+              <td>Converts Box2D collision events into game messages.</td>
+              <td>PhysicsSystem, InteractableSystem</td>
+            </tr>
+            <tr>
+              <td><strong>AssetLoader</strong></td>
+              <td>Loads and manages textures, sounds, and fonts.</td>
+              <td>RenderingSystem, AudioSystem, EntityMaker</td>
+            </tr>
+            <tr>
+              <td><strong>EntityMaker</strong></td>
+              <td>Builds entities by attaching the right components.</td>
+              <td>AssetLoader, all Components</td>
+            </tr>
+            <tr>
+              <td><strong>FixedStepper / FixedStepSystem</strong></td>
+              <td>Keeps physics and timer updates consistent regardless of frame rate.</td>
+              <td>PhysicsSystem, TimerSystem</td>
+            </tr>
+            <tr>
+              <td><strong>SafeBodyDestroy</strong></td>
+              <td>Queues up physics bodies for safe removal (prevents Box2D errors).</td>
+              <td>PhysicsSystem</td>
+            </tr>
+            <tr>
+              <td><strong>RenderOrderComparator</strong></td>
+              <td>Sorts entities for proper drawing order (layer then Y-position).</td>
+              <td>RenderingSystem, SpriteComponent</td>
+            </tr>
+            <tr>
+              <td><strong>EventCounter / ScoreCard</strong></td>
+              <td>Tracks score and progress for the game state logic.</td>
+              <td>GameStateSystem</td>
+            </tr>
+            <tr>
+              <td><strong>FontGenerator</strong></td>
+              <td>Creates fonts used in the menus and HUD.</td>
+              <td>BaseMenuScreen, LevelScreen</td>
+            </tr>
+            <tr>
+              <td><strong>OpenSurveyMessage</strong></td>
+              <td>Sent whenever the player interacts with the surveyor student.</td>
+              <td>SurveyorSystem, InteractableMessage</td>
+            </tr>
+            <tr>
+              <td><strong>AchievementMessage</strong></td>
+              <td>Requests an achivement to be saved to the game.</td>
+              <td>AchivementSystem, MessageSystem</td>
+            </tr>
+            <tr>
+              <td><strong>LectureMessage</strong></td>
+              <td>Sent whenever the player interacts with the lecturer.</td>
+              <td>LecturerSystem, InteractableMessage</td>
+            </tr>
+            <tr>
+              <td><strong>InteractableMessage</strong></td>
+              <td>Represents a message generated by an interactable object the player collides with.</td>
+              <td>Message, OpenSurveyMessage, LectureMessage</td>
+            </tr>
+            <tr>
+              <td><strong>CollisionMessage</strong></td>
+              <td>Sent when two objects start colliding in the physics engine.</td>
+              <td>Message</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr />
+
+        <h2 id="why-we-used-crc-cards">Why We Used CRC Cards</h2>
+
+        <p>Making CRC cards helped us figure out what each part of the game should be responsible for.<br />
+        It stopped us from putting too much logic into one system and made it easier for everyone on the team to see how things connected.</p>
+
+        <p>They also helped us link our requirements to the actual code. For example:</p>
+
+        <ul>
+          <li>
+            <p><strong>Door and pressure plate feature:</strong><br />
+            Done with InteractableComponent, InteractableSystem, and HiddenWallSystem.<br />
+            When the player steps on the plate, a PressurePlateTriggerMessage tells the wall to open.</p>
+          </li>
+          <li>
+            <p><strong>Audio feedback:</strong><br />
+            Done through the AudioSystem, which plays sounds when it receives SoundMessage or WorldSoundMessage.</p>
+          </li>
+        </ul>
+
+        <hr />
+
+        <h2 id="notes">Notes</h2>
+
+        <p>Making these cards early on was really helpful. It let us spot overlap between systems and simplify the design.
+        For example, we originally put the camera logic in PlayerSystem, but moving it into a separate WorldCameraSystem made things much cleaner.</p>
+
+        <p>Overall, the CRC cards gave us a simple way to plan and communicate how everything fits together in our ECS design.</p>
+      </div>
+
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrapper">
+    <h2 class="footer-heading">ENG1-C1G5</h2>
+  </div>
 </footer>
 </body>
-
-
-<!-- Mirrored from eng1-c1g11.github.io/crc-card-table.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 11 Jan 2026 14:20:54 GMT -->
 </html>
