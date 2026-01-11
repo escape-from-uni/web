@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LecturerSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.systems</a> &gt; <span class="el_source">LecturerSystem.java</span></div><h1>LecturerSystem.java</h1><pre class="source lang-java linenums">package io.github.maze11.systems;
+
+import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
+
+import io.github.maze11.components.AnimationComponent;
+import io.github.maze11.components.ChaserComponent;
+import io.github.maze11.components.ChaserComponent.ChaseAnimState;
+import io.github.maze11.components.InteractableComponent;
+import io.github.maze11.components.PhysicsComponent;
+import io.github.maze11.components.TransformComponent;
+import io.github.maze11.fixedStep.FixedStepper;
+import io.github.maze11.fixedStep.IteratingFixedStepSystem;
+import io.github.maze11.messages.*;
+import io.github.maze11.systems.gameState.Achievement;
+import io.github.maze11.systems.gameState.MetaGameState;
+
+public class LecturerSystem extends IteratingFixedStepSystem {
+
+<span class="fc" id="L24">    ComponentMapper&lt;ChaserComponent&gt; lecturerMapper = ComponentMapper.getFor(ChaserComponent.class);</span>
+<span class="fc" id="L25">    ComponentMapper&lt;TransformComponent&gt; transformMapper = ComponentMapper.getFor(TransformComponent.class);</span>
+<span class="fc" id="L26">    ComponentMapper&lt;PhysicsComponent&gt; physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);</span>
+<span class="fc" id="L27">    ComponentMapper&lt;InteractableComponent&gt; interactableMapper = ComponentMapper.getFor(InteractableComponent.class);</span>
+
+<span class="fc" id="L29">    ComponentMapper&lt;AnimationComponent&gt; animMapper = ComponentMapper.getFor(AnimationComponent.class);</span>
+
+    private Entity target;
+    final MessageListener messageListener;
+<span class="fc" id="L33">    private static boolean lectured = false;</span>
+    private final MessagePublisher messagePublisher;
+
+    public LecturerSystem(FixedStepper fixedStepper, MessagePublisher publisher) {
+<span class="fc" id="L37">        super(</span>
+                fixedStepper,
+<span class="fc" id="L39">                Family.all(</span>
+                        ChaserComponent.class,
+                        TransformComponent.class,
+                        PhysicsComponent.class,
+                        InteractableComponent.class,
+                        AnimationComponent.class
+<span class="fc" id="L45">                ).get()</span>
+        );
+
+<span class="fc" id="L48">        this.messageListener = new MessageListener(publisher);</span>
+<span class="fc" id="L49">        this.messagePublisher = publisher;</span>
+<span class="fc" id="L50">    }</span>
+
+    public void setTarget(Entity target) {
+<span class="fc" id="L53">        this.target = target;</span>
+<span class="fc" id="L54">    }</span>
+
+    @Override
+    protected void fixedStepProcessEntity(Entity entity, float deltaTime) {
+
+<span class="fc" id="L59">        handleMessages();</span>
+
+<span class="fc" id="L61">        ChaserComponent lecturer = lecturerMapper.get(entity);</span>
+
+<span class="fc" id="L63">        var transform = transformMapper.get(entity);</span>
+<span class="fc" id="L64">        var targetTransform = transformMapper.get(target);</span>
+<span class="fc" id="L65">        var physics = physicsMapper.get(entity);</span>
+<span class="fc" id="L66">        var interactable = interactableMapper.get(entity);</span>
+
+<span class="fc" id="L68">        Vector2 displacement = new Vector2(targetTransform.position).sub(transform.position);</span>
+
+<span class="fc" id="L70">        var data = new ProcessData(entity, deltaTime, lecturer, transform, physics, interactable, targetTransform, displacement);</span>
+
+        // AI behaviour
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        switch (lecturer.state) {</span>
+<span class="fc" id="L74">            case WANDER -&gt; processWander(data);</span>
+<span class="fc" id="L75">            case CHASE -&gt; processChase(data);</span>
+<span class="fc" id="L76">            case RETREAT -&gt; processRetreat(data);</span>
+        }
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L80">        AnimationComponent&lt;ChaseAnimState&gt; anim = (AnimationComponent&lt;ChaseAnimState&gt;) animMapper.get(entity);</span>
+
+<span class="fc" id="L82">        Vector2 vel = physics.body.getLinearVelocity();</span>
+<span class="fc" id="L83">        ChaseAnimState newAnimState = resolveAnimation(vel, lecturer.animState);</span>
+
+        // Reset animation when switching states
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (anim.currentState != newAnimState) {</span>
+<span class="nc" id="L87">            anim.currentState = newAnimState;</span>
+<span class="nc" id="L88">            anim.elapsed = 0f;</span>
+        } else {
+<span class="fc" id="L90">            anim.elapsed += deltaTime;</span>
+        }
+
+<span class="fc" id="L93">        var animation = anim.animations.get(anim.currentState);</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (animation != null) {</span>
+<span class="nc" id="L95">            anim.currentFrame = animation.getKeyFrame(anim.elapsed, true);</span>
+        }
+
+        // Save for next frame
+<span class="fc" id="L99">        lecturer.animState = newAnimState;</span>
+<span class="fc" id="L100">    }</span>
+
+    /**
+     * Determines which animation the lecturer should play according to its velocity
+     * @param vel The current velocity the lecturer is moving at
+     * @param last The last animation: used as a default if the lecturer is not moving
+     * @return
+     */
+    ChaseAnimState resolveAnimation(Vector2 vel, ChaseAnimState last) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (vel.len2() &lt; 0.01f) {</span>
+            // Idle version of last direction
+<span class="pc bpc" id="L111" title="1 of 5 branches missed.">            return switch (last) {</span>
+<span class="fc" id="L112">                case WALK_UP, IDLE_UP -&gt; ChaseAnimState.IDLE_UP;</span>
+<span class="fc" id="L113">                case WALK_RIGHT, IDLE_RIGHT -&gt; ChaseAnimState.IDLE_RIGHT;</span>
+<span class="fc" id="L114">                case WALK_DOWN, IDLE_DOWN -&gt; ChaseAnimState.IDLE_DOWN;</span>
+<span class="fc" id="L115">                case WALK_LEFT, IDLE_LEFT -&gt; ChaseAnimState.IDLE_LEFT;</span>
+            };
+        }
+
+        // Movement → direction-based walk
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if (Math.abs(vel.x) &gt; Math.abs(vel.y)) {</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            return vel.x &gt; 0 ? ChaseAnimState.WALK_RIGHT : ChaseAnimState.WALK_LEFT;</span>
+        } else {
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            return vel.y &gt; 0 ? ChaseAnimState.WALK_UP : ChaseAnimState.WALK_DOWN;</span>
+        }
+    }
+
+    /**
+     * Consumes any new messages it received and reacts.
+     * If the lecturer has met a player, begin the lecture.
+//     */
+    private void handleMessages() {
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        while (messageListener.hasNext()) {</span>
+<span class="nc" id="L133">            var message = messageListener.next();</span>
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if (message.type == MessageType.LECTURE) {</span>
+<span class="nc" id="L136">                Entity entity = ((LectureMessage) message).getInteractable();</span>
+<span class="nc" id="L137">                var lecturerComponent = lecturerMapper.get(entity);</span>
+<span class="nc" id="L138">                enterRetreat(lecturerComponent);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                if (!lectured) {</span>
+<span class="nc" id="L140">                    lectured = true;</span>
+<span class="nc" id="L141">                    lecturerComponent.chaseSpeed = 0;</span>
+<span class="nc" id="L142">                    this.lectureToasts(messagePublisher);</span>
+                }
+            }
+<span class="nc" id="L145">        }</span>
+<span class="fc" id="L146">    }</span>
+
+    void lectureToasts(MessagePublisher messagePublisher) {
+<span class="nc" id="L149">        PlayerSystem.inCutscene = true;</span>
+<span class="nc" id="L150">        ToastMessage[] toasts = {</span>
+                new ToastMessage(&quot;Greetings student!\nWelcome to the lecture on uhhhhhhhhh...&quot;, 4f),
+                new ToastMessage(&quot;How to: play the game...&quot;, 4f),
+                new ToastMessage(&quot;So uh basically you have to do stuff, and, uh you get points.&quot;, 4f),
+                new ToastMessage(&quot;And then you've got to do it, like, fast. right?&quot;, 4f),
+                new ToastMessage(&quot;So don't get delayed and stuff...\nI think that's all there is to it.&quot;, 4f),
+                new ToastMessage(&quot;And...Have...Fun...(Yawn)....Zzzzz...&quot;, 4f),
+        };
+
+<span class="nc" id="L159">        float startDelay = 0f;</span>
+<span class="nc" id="L160">        float gap = 4f;</span>
+
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        for (int i = 0; i &lt; toasts.length; i++) {</span>
+<span class="nc" id="L163">            final ToastMessage msg = toasts[i];</span>
+<span class="nc" id="L164">            float delay = startDelay + i * gap;</span>
+
+<span class="nc" id="L166">            Timer.schedule(new Timer.Task() {</span>
+                @Override
+                public void run() {
+<span class="nc" id="L169">                    messagePublisher.publish(msg);</span>
+<span class="nc" id="L170">                }</span>
+            }, delay);
+        }
+<span class="nc" id="L173">        Timer.schedule(new Timer.Task() {</span>
+            @Override
+            public void run() {
+<span class="nc" id="L176">                PlayerSystem.inCutscene = false;</span>
+<span class="nc" id="L177">                MetaGameState.unlockAchievement(new Achievement(&quot;Blah Blah Blah&quot;, &quot;Get lectured on very interesting subjects.&quot;), messageListener.publisher);</span>
+<span class="nc" id="L178">            }</span>
+        }, 32);
+
+<span class="nc" id="L181">    }</span>
+
+    /**
+     * Perform fixed update processing for a lecturer in the wander state
+     */
+    private void processWander(ProcessData data) {
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        if (magnitudeIsWithin(data.displacementFromTarget, data.lecturer.detectionRadius)) {</span>
+<span class="fc" id="L188">            enterChase(data.lecturer);</span>
+<span class="fc" id="L189">            return;</span>
+        }
+
+<span class="fc" id="L192">        var lecturer = data.lecturer;</span>
+
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if (lecturer.currentWanderWaypoint == null) {</span>
+<span class="fc" id="L195">            lecturer.currentWanderWaypoint = new Vector2();</span>
+<span class="fc" id="L196">            randomiseWaypoint(lecturer);</span>
+        }
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">        else if (magnitudeIsWithin(</span>
+<span class="fc" id="L199">                data.transform.position.cpy().sub(lecturer.currentWanderWaypoint),</span>
+                lecturer.wanderAcceptDistance
+        )) {
+<span class="fc" id="L202">            randomiseWaypoint(lecturer);</span>
+        }
+
+<span class="fc" id="L205">        Vector2 direction = new Vector2(lecturer.currentWanderWaypoint)</span>
+<span class="fc" id="L206">                .sub(data.transform.position)</span>
+<span class="fc" id="L207">                .nor();</span>
+
+<span class="fc" id="L209">        data.physics.body.setLinearVelocity(direction.scl(lecturer.wanderSpeed));</span>
+<span class="fc" id="L210">    }</span>
+
+    /**
+     * Perform fixed update processing for a lecturer in the chase state
+     */
+    private void processChase(ProcessData data) {
+//        if (lectured){
+//            data.physics.body.setLinearVelocity(new Vector2(0,0));
+//            return;
+//        }
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (!magnitudeIsWithin(data.displacementFromTarget, data.lecturer.forgetRadius)) {</span>
+<span class="fc" id="L221">            enterWander(data.lecturer);</span>
+<span class="fc" id="L222">            return;</span>
+        }
+
+<span class="nc" id="L225">        Vector2 velocity = new Vector2(data.displacementFromTarget)</span>
+<span class="nc" id="L226">                .nor()</span>
+<span class="nc" id="L227">                .scl(data.lecturer.chaseSpeed);</span>
+
+<span class="nc" id="L229">        data.physics.body.setLinearVelocity(velocity);</span>
+<span class="nc" id="L230">    }</span>
+
+    /**
+     * Perform fixed update processing for a lecturer in the retreat state
+     */
+    private void processRetreat(ProcessData data) {
+//        if (lectured){
+//            data.physics.body.setLinearVelocity(new Vector2(0,0));
+//            return;
+//        }
+
+<span class="fc" id="L241">        data.lecturer.retreatTimeElapsed += data.deltaTime;</span>
+
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (data.lecturer.retreatTimeElapsed &gt; data.lecturer.retreatTime) {</span>
+<span class="fc" id="L244">            data.interactable.interactionEnabled = true;</span>
+<span class="fc" id="L245">            enterChase(data.lecturer);</span>
+        }
+
+<span class="fc" id="L248">        Vector2 velocity = new Vector2(data.displacementFromTarget)</span>
+<span class="fc" id="L249">                .nor()</span>
+<span class="fc" id="L250">                .scl(-data.lecturer.retreatSpeed);</span>
+
+<span class="fc" id="L252">        data.physics.body.setLinearVelocity(velocity);</span>
+<span class="fc" id="L253">    }</span>
+
+    /**
+     * Switches the lecturer provided to the wander state from whichever state it is currently in
+     */
+    void enterWander(ChaserComponent lecturer) {
+<span class="fc" id="L259">        lecturer.state = ChaserComponent.ChaseState.WANDER;</span>
+<span class="fc" id="L260">    }</span>
+
+    /**
+     * Switches the lecturer provided to the chase state from whichever state it is currently in
+     */
+    void enterChase(ChaserComponent lecturer) {
+<span class="fc" id="L266">        lecturer.state = ChaserComponent.ChaseState.CHASE;</span>
+<span class="fc" id="L267">    }</span>
+
+    /**
+     * Switches the lecturer provided to the retreat state from whichever state it is currently in
+     */
+    void enterRetreat(ChaserComponent lecturer) {
+<span class="fc" id="L273">        lecturer.retreatTimeElapsed = 0f;</span>
+<span class="fc" id="L274">        lecturer.state = ChaserComponent.ChaseState.RETREAT;</span>
+<span class="fc" id="L275">    }</span>
+
+    private boolean magnitudeIsWithin(Vector2 v, float limit) {
+<span class="fc bfc" id="L278" title="All 2 branches covered.">        return v.len2() &lt;= limit * limit;</span>
+    }
+
+    /**
+     * Picks a new waypoint for this lecturer to walk towards
+     * @param lecturer The lecturer in need of a waypoint
+     */
+    void randomiseWaypoint(ChaserComponent lecturer) {
+<span class="fc" id="L286">        float dist = (float) Math.sqrt(MathUtils.random()) * lecturer.wanderRadius;</span>
+
+<span class="fc" id="L288">        lecturer.currentWanderWaypoint</span>
+<span class="fc" id="L289">                .setToRandomDirection()</span>
+<span class="fc" id="L290">                .scl(dist)</span>
+<span class="fc" id="L291">                .add(lecturer.homePosition);</span>
+<span class="fc" id="L292">    }</span>
+
+<span class="fc" id="L294">    private record ProcessData(</span>
+            Entity entity,
+            float deltaTime,
+            ChaserComponent lecturer,
+            TransformComponent transform,
+            PhysicsComponent physics,
+            InteractableComponent interactable,
+            TransformComponent target,
+            Vector2 displacementFromTarget
+    ) {}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

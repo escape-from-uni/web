@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.screens</a> &gt; <span class="el_source">MenuScreen.java</span></div><h1>MenuScreen.java</h1><pre class="source lang-java linenums">package io.github.maze11.screens;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import io.github.maze11.MazeGame;
+import io.github.maze11.ui.FontGenerator;
+
+/**
+ * Main menu screen contains UI logic for buttons when game starts
+ * provides options to start game or quit
+ */
+public class MenuScreen extends BaseMenuScreen {
+
+    public MenuScreen(MazeGame game) {
+<span class="nc" id="L18">        super(game);</span>
+<span class="nc" id="L19">        System.out.println(&quot;Menu screen launched&quot;);</span>
+<span class="nc" id="L20">        buildUI();</span>
+<span class="nc" id="L21">    }</span>
+
+    @Override
+    protected void buildUI() {
+<span class="nc" id="L25">        Table table = new Table();</span>
+<span class="nc" id="L26">        table.setFillParent(true);</span>
+
+<span class="nc" id="L28">        Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, Color.WHITE);</span>
+<span class="nc" id="L29">        Label title = new Label(&quot;Maze Game&quot;, titleStyle);</span>
+
+<span class="nc" id="L31">        Label.LabelStyle bodyStyle = new Label.LabelStyle(bodyFont, Color.LIGHT_GRAY);</span>
+<span class="nc" id="L32">        Label subtitle = new Label(&quot;Navigate the maze!&quot;, bodyStyle);</span>
+
+<span class="nc" id="L34">        BitmapFont buttonFont = FontGenerator.generateRobotoFont(24, Color.WHITE, skin);</span>
+<span class="nc" id="L35">        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(skin.get(TextButton.TextButtonStyle.class));</span>
+<span class="nc" id="L36">        buttonStyle.font = buttonFont;</span>
+
+<span class="nc" id="L38">        TextButton startButton = new TextButton(&quot;Start Game&quot;, buttonStyle);</span>
+<span class="nc" id="L39">        startButton.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L42">                game.replaceScreen(new LevelScreen(game));</span>
+<span class="nc" id="L43">                playMenuClick();</span>
+<span class="nc" id="L44">            }</span>
+        });
+
+<span class="nc" id="L47">        TextButton highButton = new TextButton(&quot;High Scores&quot;, buttonStyle);</span>
+<span class="nc" id="L48">        highButton.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L51">                game.openScreen(new HighScoreScreen(game,&quot;High Scores&quot;));</span>
+<span class="nc" id="L52">                playMenuClick();</span>
+<span class="nc" id="L53">            }</span>
+        });
+<span class="nc" id="L55">        TextButton achievementButton = new TextButton(&quot;Achievements&quot;, buttonStyle);</span>
+<span class="nc" id="L56">        achievementButton.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L59">                game.openScreen(new AchievementScreen(game,&quot;Achievements&quot;));</span>
+<span class="nc" id="L60">                playMenuClick();</span>
+<span class="nc" id="L61">            }</span>
+        });
+<span class="nc" id="L63">        TextButton creditsButton = new TextButton(&quot;Credits&quot;, buttonStyle);</span>
+<span class="nc" id="L64">        creditsButton.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L67">                game.openScreen(new ScrollTextScreen(game,&quot;Credits&quot;,</span>
+                    &quot;&quot;&quot;
+                        Cohort 5
+                         Will Aston
+                         Joseph Hinde
+                         Zathia Jacquesson-Ahmad
+                         Jacob MacE
+                         Maryam Mathews
+                         Bulganchimeg Munkhjargal
+                         Evan Weston
+
+
+                        Cohort 11
+                         Freddie Aberdeen
+                         Mutaz Ghandour
+                         James Given
+                         Jasper Owen
+                         Jungwan Park
+                         Joe Reece
+                         Ivan Shestakov
+
+
+                        Engineering 1 Lecturers
+                         Konstantinos Barmpis
+                         Tommy Yuan
+                         Robbert Jongeling
+                         Mark Sujan
+
+                        &quot;&quot;&quot;
+                ));
+<span class="nc" id="L97">                playMenuClick();</span>
+<span class="nc" id="L98">            }</span>
+        });
+
+<span class="nc" id="L101">        TextButton quitButton = new TextButton(&quot;Quit&quot;, buttonStyle);</span>
+<span class="nc" id="L102">        quitButton.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L105">                System.exit(0);</span>
+<span class="nc" id="L106">            }</span>
+        });
+        // vertical stack layout for elements in menu screen
+<span class="nc" id="L109">        table.add(title).padBottom(20).row(); // e.g. title with 20px space below</span>
+<span class="nc" id="L110">        table.add(subtitle).padBottom(40).row();</span>
+<span class="nc" id="L111">        table.add(startButton).width(200).height(60).padBottom(10).row();</span>
+<span class="nc" id="L112">        table.add(highButton).width(200).height(60).padBottom(10).row();</span>
+<span class="nc" id="L113">        table.add(achievementButton).width(200).height(60).padBottom(10).row();</span>
+<span class="nc" id="L114">        table.add(creditsButton).width(200).height(60).padBottom(10).row();</span>
+<span class="nc" id="L115">        table.add(quitButton).width(200).height(60);</span>
+
+<span class="nc" id="L117">        stage.addActor(table);</span>
+<span class="nc" id="L118">    }</span>
+
+    @Override
+    protected float[] getBackgroundColor() {
+<span class="nc" id="L122">        return new float[]{0.1f, 0.1f, 0.2f}; // Dark blue</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

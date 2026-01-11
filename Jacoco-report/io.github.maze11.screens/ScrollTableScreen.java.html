@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScrollTableScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.screens</a> &gt; <span class="el_source">ScrollTableScreen.java</span></div><h1>ScrollTableScreen.java</h1><pre class="source lang-java linenums">package io.github.maze11.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import io.github.maze11.MazeGame;
+import io.github.maze11.ui.FontGenerator;
+
+/**
+ * Used for displaying scrolling sub-tables or lists e.g. high scores or achievements
+ */
+public abstract class ScrollTableScreen extends BaseMenuScreen {
+<span class="nc" id="L22">    private String titleName = &quot;&quot;;</span>
+    public ScrollTableScreen(MazeGame game, String titleName) {
+<span class="nc" id="L24">        super(game);</span>
+<span class="nc" id="L25">        this.titleName = titleName;</span>
+<span class="nc" id="L26">        System.out.println(titleName + &quot; launched&quot;);</span>
+<span class="nc" id="L27">        buildUI();</span>
+<span class="nc" id="L28">    }</span>
+
+    @Override
+    protected void buildUI() {
+<span class="nc" id="L32">        Table table = new Table();</span>
+<span class="nc" id="L33">        table.setFillParent(true);</span>
+
+<span class="nc" id="L35">        Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, Color.WHITE);</span>
+<span class="nc" id="L36">        Label title = new Label(titleName, titleStyle);</span>
+
+<span class="nc" id="L38">        BitmapFont buttonFont = FontGenerator.generateRobotoFont(24, Color.WHITE, skin);</span>
+<span class="nc" id="L39">        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(skin.get(TextButton.TextButtonStyle.class));</span>
+<span class="nc" id="L40">        buttonStyle.font = buttonFont;</span>
+
+        //TODO: Change to a &quot;Back&quot; button.
+<span class="nc" id="L43">        TextButton returnButton = new TextButton(&quot;Return&quot;, buttonStyle);</span>
+<span class="nc" id="L44">        returnButton.addListener(new ClickListener() {</span>
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L47">                game.closeCurrentScreen();</span>
+<span class="nc" id="L48">                playMenuClick();</span>
+<span class="nc" id="L49">            }</span>
+        });
+        // vertical stack layout for elements in menu screen
+<span class="nc" id="L52">        table.add(title).padBottom(20).row(); // e.g. title with 20px space below</span>
+        //Add scrolling subtable containing data
+<span class="nc" id="L54">        Table innerTable = createTableData();</span>
+<span class="nc" id="L55">        ScrollPane scrollPane = new ScrollPane(innerTable);</span>
+<span class="nc" id="L56">        ScrollPane.ScrollPaneStyle style = new ScrollPane.ScrollPaneStyle();</span>
+<span class="nc" id="L57">        style.vScrollKnob = new NinePatchDrawable(new NinePatch(new Texture(Gdx.files.internal(&quot;ui/uirect.png&quot;)),12,12,12,12));</span>
+<span class="nc" id="L58">        style.background = new NinePatchDrawable(new NinePatch(new Texture(Gdx.files.internal(&quot;ui/uirectdark.png&quot;)),12,12,12,12));</span>
+<span class="nc" id="L59">        scrollPane.setStyle(style);</span>
+<span class="nc" id="L60">        scrollPane.setFadeScrollBars(false);</span>
+<span class="nc" id="L61">        scrollPane.setScrollbarsVisible(true);</span>
+<span class="nc" id="L62">        table.add(scrollPane).height(400).row();</span>
+<span class="nc" id="L63">        table.add(returnButton).width(200).height(60).padBottom(10).row();</span>
+
+<span class="nc" id="L65">        stage.addActor(table);</span>
+<span class="nc" id="L66">    }</span>
+
+    @Override
+    protected float[] getBackgroundColor() {
+<span class="nc" id="L70">        return new float[]{0.1f, 0.1f, 0.2f}; // Dark blue</span>
+    }
+    public abstract Table createTableData();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

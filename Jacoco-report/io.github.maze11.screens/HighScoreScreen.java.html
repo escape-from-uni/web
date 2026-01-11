@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HighScoreScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.screens</a> &gt; <span class="el_source">HighScoreScreen.java</span></div><h1>HighScoreScreen.java</h1><pre class="source lang-java linenums">package io.github.maze11.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import io.github.maze11.MazeGame;
+import io.github.maze11.systems.gameState.MetaGameState;
+import io.github.maze11.systems.gameState.ScoreCard;
+
+public class HighScoreScreen extends ScrollTableScreen {
+    public HighScoreScreen(MazeGame game, String name) {
+<span class="nc" id="L16">        super(game, name);</span>
+<span class="nc" id="L17">    }</span>
+
+    @Override
+    public Table createTableData() {
+<span class="nc" id="L21">        Table table = new Table();</span>
+<span class="nc" id="L22">        Label.LabelStyle headingStyle = new Label.LabelStyle(bodyFont, Color.GOLD);</span>
+<span class="nc" id="L23">        Label.LabelStyle bodyStyle = new Label.LabelStyle(bodyFont, Color.LIGHT_GRAY);</span>
+<span class="nc" id="L24">        NinePatchDrawable cellBackground = new NinePatchDrawable(new NinePatch(new Texture(Gdx.files.internal(&quot;ui/uirect.png&quot;)),12,12,12,12));</span>
+<span class="nc" id="L25">        headingStyle.background = cellBackground;</span>
+<span class="nc" id="L26">        bodyStyle.background = cellBackground;</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (MetaGameState.getHighScores().isEmpty()){</span>
+<span class="nc" id="L28">            new Label(&quot;No High Scores Yet!&quot;, bodyStyle);</span>
+        }else{
+<span class="nc" id="L30">            table.pad(10).add(new Label(&quot;Name&quot;, headingStyle)).growX();</span>
+<span class="nc" id="L31">            table.pad(10).add(new Label(&quot;Score&quot;,headingStyle)).growX().row();</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">            for (ScoreCard hs : MetaGameState.getHighScores().descendingSet()){</span>
+<span class="nc" id="L33">                Label name = new Label(hs.name(), bodyStyle);</span>
+<span class="nc" id="L34">                Label total = new Label(Integer.toString(hs.totalScore()), bodyStyle);</span>
+<span class="nc" id="L35">                table.pad(10).add(name).growX();</span>
+<span class="nc" id="L36">                table.pad(10).add(total).growX().row();</span>
+<span class="nc" id="L37">            }</span>
+        }
+<span class="nc" id="L39">        table.setWidth(500);</span>
+<span class="nc" id="L40">        return table;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

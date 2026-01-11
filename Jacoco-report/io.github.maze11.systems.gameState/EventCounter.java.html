@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventCounter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.systems.gameState</a> &gt; <span class="el_source">EventCounter.java</span></div><h1>EventCounter.java</h1><pre class="source lang-java linenums">package io.github.maze11.systems.gameState;
+
+import io.github.maze11.messages.MessageType;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Map.entry;
+
+/**
+ * Keeps count of the number of events and can output a score summary
+ */
+<span class="nc" id="L16">public class EventCounter {</span>
+    /** Stores the event types this records, along with their effect on score and message to show in the win screen*/
+<span class="nc" id="L18">    private final Map&lt;MessageType, MessageData&gt; messageMappings = Map.ofEntries(</span>
+<span class="nc" id="L19">        entry(MessageType.COLLECT_COFFEE, new MessageData(&quot;Coffees Collected&quot;, 10)),</span>
+<span class="nc" id="L20">        entry(MessageType.CHECK_IN_CODE_COLLECT, new MessageData(&quot;Check-in codes collected&quot;, 20)),</span>
+<span class="nc" id="L21">        entry(MessageType.GOOSE_BITE, new MessageData(&quot;Goose Bites&quot;, -1)),</span>
+<span class="nc" id="L22">        entry(MessageType.COMPLETE_SURVEY, new MessageData(&quot;Completed Surveys&quot;, 200)),</span>
+<span class="nc" id="L23">        entry(MessageType.UNLOCK_SAFE, new MessageData(&quot;Safe Opened&quot;, 200))</span>
+    );
+
+<span class="nc" id="L26">    private final Map&lt;MessageType, Integer&gt; recordedCounts = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L27">    private final int scorePerLeftoverSecond = 1;</span>
+<span class="nc" id="L28">    private final int completionBonus = 100;</span>
+
+    /** Records that a new instance of this message was registered in the EventCounter */
+    public void receiveMessage(MessageType messageType) {
+        // Check if this is a message this class is supposed to track
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (messageMappings.containsKey(messageType)) {</span>
+            // Increment the number of events of this type received by 1
+<span class="nc bnc" id="L35" title="All 2 branches missed.">            if (recordedCounts.containsKey(messageType)) {</span>
+<span class="nc" id="L36">                recordedCounts.put(messageType, recordedCounts.get(messageType) + 1);</span>
+            }
+            else {
+<span class="nc" id="L39">                recordedCounts.put(messageType, 1);</span>
+            }
+        }
+<span class="nc" id="L42">    }</span>
+
+    /**
+     * Generates the player score and a breakdown of how it was obtained
+     * @param mazeExited Whether or not the player has reached the exit
+     * @param secondsRemaining The seconds remaining on the timer at this point
+     * @return A ScoreCard which contains the score and a breakdown of it
+     */
+    public ScoreCard makeScoreCard(boolean mazeExited, int secondsRemaining) {
+<span class="nc" id="L51">        List&lt;String&gt; breakdown = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L52">        int totalScore = 0;</span>
+
+        // Calculate score from each of the tracked events
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        for (var term : messageMappings.entrySet()) {</span>
+            // Get the number of events of this type collected. If no term, none of this event have been collected
+<span class="nc" id="L57">            int occurrences = recordedCounts.getOrDefault(term.getKey(), 0);</span>
+            // Skip any occurrences you missed
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (occurrences == 0) continue;</span>
+<span class="nc" id="L60">            MessageData data = term.getValue();</span>
+
+<span class="nc" id="L62">            int scoreContribution = data.scoreBonus * occurrences;</span>
+<span class="nc" id="L63">            totalScore += scoreContribution;</span>
+
+<span class="nc" id="L65">            breakdown.add(occurrences + &quot; &quot; + data.name + &quot;: &quot; + formatBonus(scoreContribution));</span>
+<span class="nc" id="L66">        }</span>
+
+        // Time left over and completion bonus is only available if the player has left the maze
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (mazeExited) {</span>
+            // Add score for left over time
+<span class="nc" id="L71">            int scoreContribution = scorePerLeftoverSecond * secondsRemaining;</span>
+<span class="nc" id="L72">            totalScore += scoreContribution;</span>
+<span class="nc" id="L73">            breakdown.add(&quot;Time remaining bonus: &quot; + formatBonus(scoreContribution));</span>
+<span class="nc" id="L74">            totalScore += completionBonus;</span>
+<span class="nc" id="L75">            breakdown.add(&quot;Escape bonus: &quot; + formatBonus(completionBonus));</span>
+        }
+<span class="nc" id="L77">        String name = JOptionPane.showInputDialog(null, &quot;Enter name:&quot;, null);</span>
+<span class="nc" id="L78">        return new ScoreCard(totalScore, breakdown, name);</span>
+    }
+
+    private String formatBonus(int bonus) {
+        // Add a + to the displayed contribution if it is positive or 0
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        return bonus &gt;= 0 ? &quot;+&quot; + bonus : bonus + &quot;&quot;;</span>
+    }
+
+<span class="nc" id="L86">    private record MessageData(String name, int scoreBonus){ }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

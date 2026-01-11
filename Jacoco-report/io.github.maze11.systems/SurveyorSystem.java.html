@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SurveyorSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.systems</a> &gt; <span class="el_source">SurveyorSystem.java</span></div><h1>SurveyorSystem.java</h1><pre class="source lang-java linenums">package io.github.maze11.systems;
+
+import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import io.github.maze11.components.*;
+import io.github.maze11.components.ChaserComponent.ChaseAnimState;
+import io.github.maze11.fixedStep.FixedStepper;
+import io.github.maze11.fixedStep.IteratingFixedStepSystem;
+import io.github.maze11.messages.*;
+
+import javax.swing.*;
+import java.util.HashSet;
+
+public class SurveyorSystem extends IteratingFixedStepSystem {
+
+<span class="fc" id="L19">    ComponentMapper&lt;ChaserComponent&gt; chaserMapper = ComponentMapper.getFor(ChaserComponent.class);</span>
+<span class="fc" id="L20">    ComponentMapper&lt;TransformComponent&gt; transformMapper = ComponentMapper.getFor(TransformComponent.class);</span>
+<span class="fc" id="L21">    ComponentMapper&lt;PhysicsComponent&gt; physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);</span>
+<span class="fc" id="L22">    ComponentMapper&lt;InteractableComponent&gt; interactableMapper = ComponentMapper.getFor(InteractableComponent.class);</span>
+
+<span class="fc" id="L24">    ComponentMapper&lt;AnimationComponent&gt; animMapper = ComponentMapper.getFor(AnimationComponent.class);</span>
+
+    private Entity target;
+    private final MessageListener messageListener;
+<span class="fc" id="L28">    private static Boolean surveyStarted = false;</span>
+
+    public SurveyorSystem(FixedStepper fixedStepper, MessagePublisher publisher) {
+<span class="fc" id="L31">        super(</span>
+            fixedStepper,
+<span class="fc" id="L33">            Family.all(</span>
+                ChaserComponent.class,
+                TransformComponent.class,
+                PhysicsComponent.class,
+                InteractableComponent.class,
+                AnimationComponent.class
+<span class="fc" id="L39">            ).get()</span>
+        );
+
+<span class="fc" id="L42">        this.messageListener = new MessageListener(publisher);</span>
+<span class="fc" id="L43">    }</span>
+
+    public void setTarget(Entity target) {
+<span class="fc" id="L46">        this.target = target;</span>
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    protected void fixedStepProcessEntity(Entity entity, float deltaTime) {
+
+<span class="fc" id="L52">        handleMessages();</span>
+
+<span class="fc" id="L54">        ChaserComponent goose = chaserMapper.get(entity);</span>
+
+<span class="fc" id="L56">        var transform = transformMapper.get(entity);</span>
+<span class="fc" id="L57">        var targetTransform = transformMapper.get(target);</span>
+<span class="fc" id="L58">        var physics = physicsMapper.get(entity);</span>
+<span class="fc" id="L59">        var interactable = interactableMapper.get(entity);</span>
+
+<span class="fc" id="L61">        Vector2 displacement = new Vector2(targetTransform.position).sub(transform.position);</span>
+
+<span class="fc" id="L63">        var data = new ProcessData(entity, deltaTime, goose, transform, physics, interactable, targetTransform, displacement);</span>
+
+        // AI behaviour
+<span class="pc bpc" id="L66" title="1 of 4 branches missed.">        switch (goose.state) {</span>
+<span class="fc" id="L67">            case WANDER -&gt; processWander(data);</span>
+<span class="fc" id="L68">            case CHASE -&gt; processChase(data);</span>
+<span class="fc" id="L69">            case RETREAT -&gt; processRetreat(data);</span>
+        }
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L73">        AnimationComponent&lt;ChaseAnimState&gt; anim = (AnimationComponent&lt;ChaseAnimState&gt;) animMapper.get(entity);</span>
+
+<span class="fc" id="L75">        Vector2 vel = physics.body.getLinearVelocity();</span>
+<span class="fc" id="L76">        ChaseAnimState newAnimState = resolveAnimation(vel, goose.animState);</span>
+
+        // Reset animation when switching states
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (anim.currentState != newAnimState) {</span>
+<span class="nc" id="L80">            anim.currentState = newAnimState;</span>
+<span class="nc" id="L81">            anim.elapsed = 0f;</span>
+        } else {
+<span class="fc" id="L83">            anim.elapsed += deltaTime;</span>
+        }
+
+<span class="fc" id="L86">        var animation = anim.animations.get(anim.currentState);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (animation != null) {</span>
+<span class="nc" id="L88">            anim.currentFrame = animation.getKeyFrame(anim.elapsed, true);</span>
+        }
+
+        // Save for next frame
+<span class="fc" id="L92">        goose.animState = newAnimState;</span>
+<span class="fc" id="L93">    }</span>
+
+    /**
+     * Determines which animation the goose should play according to its velocity
+     *
+     * @param vel  The current velocity the goose is moving at
+     * @param last The last animation: used as a default if the goose is not moving
+     * @return
+     */
+    ChaseAnimState resolveAnimation(Vector2 vel, ChaseAnimState last) {
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (vel.len2() &lt; 0.01f) {</span>
+            // Idle version of last direction
+<span class="pc bpc" id="L105" title="1 of 5 branches missed.">            return switch (last) {</span>
+<span class="fc" id="L106">                case WALK_UP, IDLE_UP -&gt; ChaseAnimState.IDLE_UP;</span>
+<span class="fc" id="L107">                case WALK_RIGHT, IDLE_RIGHT -&gt; ChaseAnimState.IDLE_RIGHT;</span>
+<span class="fc" id="L108">                case WALK_DOWN, IDLE_DOWN -&gt; ChaseAnimState.IDLE_DOWN;</span>
+<span class="fc" id="L109">                case WALK_LEFT, IDLE_LEFT -&gt; ChaseAnimState.IDLE_LEFT;</span>
+            };
+        }
+
+        // Movement → direction-based walk
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (Math.abs(vel.x) &gt; Math.abs(vel.y)) {</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            return vel.x &gt; 0 ? ChaseAnimState.WALK_RIGHT : ChaseAnimState.WALK_LEFT;</span>
+        } else {
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            return vel.y &gt; 0 ? ChaseAnimState.WALK_UP : ChaseAnimState.WALK_DOWN;</span>
+        }
+    }
+
+    /**
+     * Consumes any new messages it received and reacts.
+     * If the goose has bitten a player, it turns to flee.
+     */
+    private void handleMessages() {
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        while (messageListener.hasNext()) {</span>
+<span class="nc" id="L127">            var message = messageListener.next();</span>
+
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if (message.type == MessageType.OPEN_SURVEY) {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                if (!surveyStarted){</span>
+<span class="nc" id="L131">                    surveyStarted = true;</span>
+<span class="nc" id="L132">                    Entity entity = ((OpenSurveyMessage) message).getInteractable();</span>
+<span class="nc" id="L133">                    var chaserComponent = chaserMapper.get(entity);</span>
+<span class="nc" id="L134">                    chaserComponent.chaseSpeed = 0;</span>
+
+<span class="nc" id="L136">                    System.out.println(&quot;Start Survey&quot;);</span>
+<span class="nc" id="L137">                    new Thread(() -&gt; {</span>
+                        //Do whatever
+<span class="nc" id="L139">                        int choice = surveyMultipleChoice(&quot;Would you like to take part in a survey? There is a point reward!&quot;, new String[]{&quot;Yes&quot;, &quot;Uhhhh ok&quot;, &quot;Why?&quot;, &quot;No!&quot;});</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                        if (choice == 2){</span>
+<span class="nc" id="L141">                            surveyTextEntry(&quot;I don't know, you tell me! Why should you be doing this survey?&quot;,4);</span>
+<span class="nc" id="L142">                            surveyMessage(&quot;Good, I guess we can start then! :D&quot;);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                        }else if (choice == 3){</span>
+<span class="nc" id="L144">                            surveyTextEntry(&quot;Write a short paragraph about why you don't want to take part in this survey.&quot;,12);</span>
+<span class="nc" id="L145">                            surveyMessage(&quot;Thank you for your time! :D&quot;);</span>
+<span class="nc" id="L146">                            enterRetreat(chaserComponent);</span>
+                            //return will only break out of the thread, not the function.
+                            // TODO: Do not increase points, but do increase event counter.
+<span class="nc" id="L149">                            return;</span>
+                        }
+<span class="nc" id="L151">                        surveyTextEntry(&quot;What is your name?&quot;,1);</span>
+<span class="nc" id="L152">                        surveyMultipleChoice(&quot;What is your favourite colour?&quot;,new String[]{&quot;Burgundy&quot;,&quot;Grey&quot;,&quot;Neon Pink&quot;,&quot;Beige&quot;});</span>
+<span class="nc" id="L153">                        surveyTextEntry(&quot;Write a sentence about why you love the university.&quot;,7);</span>
+<span class="nc" id="L154">                        surveyMultipleChoice(&quot;Do you believe in Long Boi?&quot;,new String[]{&quot;eh&quot;,&quot;yes&quot;});</span>
+<span class="nc" id="L155">                        int riddleAnswer = surveyMultipleChoice(&quot;A farmer went to a market and bought a wolf, a goat, and a cabbage.\nOn his way home, the farmer came to the bank of a river and rented a boat.\nBut crossing the river by boat, the farmer could carry only himself and a single one of his purchases: the wolf, the goat, or the cabbage.\nIf left unattended together, the wolf would eat the goat, or the goat would eat the cabbage.\nThe farmer’s challenge was to carry himself and his purchases to the far bank of the river, leaving each purchase intact.\nWhat's the smallest number of trips the farmer would have to take?&quot;,new String[]{&quot;3&quot;,&quot;5&quot;,&quot;7&quot;,&quot;8&quot;,&quot;9&quot;,&quot;10&quot;,&quot;12&quot;});</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                        if (riddleAnswer == 2) {</span>
+<span class="nc" id="L157">                            surveyMessage(&quot;That's correct!&quot;);</span>
+                        }else{
+<span class="nc" id="L159">                            surveyMessage(&quot;You are an idiot!&quot;);</span>
+                        }
+<span class="nc" id="L161">                        surveyMultipleChoice(&quot;Are you running out of time?&quot;,new String[]{&quot;I always have time for surveys!&quot;,&quot;Time is relative?&quot;,&quot;Neon Pink&quot;});</span>
+<span class="nc" id="L162">                        int logicChoice = surveyMultipleChoice(&quot;Are you a knight or a knave?&quot;,new String[]{&quot;Knight&quot;,&quot;Knave&quot;});</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">                        if (logicChoice == 0) {</span>
+<span class="nc" id="L164">                            surveyMessage(&quot;...hmmm... but how do I know for sure?&quot;);</span>
+                        }else{
+<span class="nc" id="L166">                            surveyMessage(&quot;That is IMPOSSIBLE!!!!!&quot;);</span>
+                        }
+<span class="nc" id="L168">                        surveyTextEntry(&quot;Are you having a good time?&quot;,5);</span>
+<span class="nc" id="L169">                        surveyTextEntry(&quot;What is your name again? Sorry, I forgot.&quot;,1);</span>
+<span class="nc" id="L170">                        surveyMultipleChoice(&quot;Do you consent to us selling your browsing data to Beff Jesos?&quot;,new String[]{&quot;Yes&quot;,&quot;Maybe&quot;});</span>
+<span class="nc" id="L171">                        surveyMessage(&quot;Thank you for taking part in my survey! :)&quot;);</span>
+                        //give points
+<span class="nc" id="L173">                        messageListener.publisher.publish(new Message(MessageType.COMPLETE_SURVEY));</span>
+<span class="nc" id="L174">                        enterRetreat(chaserComponent);</span>
+<span class="nc" id="L175">                    }).start();</span>
+                }
+
+            }
+<span class="nc" id="L179">        }</span>
+<span class="fc" id="L180">    }</span>
+
+    private int surveyMultipleChoice(String question, String[] options) {
+<span class="nc" id="L183">        return JOptionPane.showOptionDialog(null, question, &quot;SURVEY&quot;, JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);</span>
+    }
+
+    private void surveyTextEntry(String question, int minWordCount) {
+<span class="nc" id="L187">        Boolean answeredCorrectly = false;</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        while (!answeredCorrectly) {</span>
+<span class="nc" id="L189">            String answer = JOptionPane.showInputDialog(null, question, null);</span>
+            //assume you answer correctly
+<span class="nc" id="L191">            answeredCorrectly = true;</span>
+            //check that your answer is &quot;legitimate&quot;
+<span class="nc" id="L193">            String[] words = answer.split(&quot;\\s&quot;);</span>
+<span class="nc" id="L194">            int wordCount = words.length;</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (wordCount &lt; minWordCount) {</span>
+<span class="nc" id="L196">                answeredCorrectly = false;</span>
+<span class="nc" id="L197">                surveyMessage(&quot;Write a more detailed answer!&quot;);</span>
+            }else{
+                //word is too small (eg &quot;a b c d e f g&quot;)
+<span class="nc" id="L200">                int smallWordCount = 0;</span>
+                //word is repeated too many times (eg hello hello hello hello hello)
+<span class="nc" id="L202">                int repeatedWordCount = 0;</span>
+                //word is nonsense (eg 123!! 123987 !!&quot;£!££!£ gugugugyhgyu)
+                //Just because it is considered 'nonsense' doesn't mean it doesn't exist
+<span class="nc" id="L205">                int nonsenseWordCount = 0;</span>
+<span class="nc" id="L206">                HashSet&lt;String&gt; enteredWords = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">                for (String word : words){</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">                    if (enteredWords.contains(word)){</span>
+<span class="nc" id="L209">                        repeatedWordCount++;</span>
+                    }else{
+<span class="nc" id="L211">                        enteredWords.add(word);</span>
+                    }
+                    //Nonsense word checker: Regex straight outta hell
+                    //used https://regexr.com/ to help
+                    //must be made out of valid characters, and cannot contain a long string of consonants, and must have a vowel
+<span class="nc bnc" id="L216" title="All 6 branches missed.">                    if (!word.matches(&quot;[a-zA-Z?!&gt;&lt;;,\&quot;&amp;']*&quot;) || word.matches(&quot;[^aeiouy]{5,}&quot;) || !word.matches(&quot;.*[aeiouy].*&quot;)){</span>
+<span class="nc" id="L217">                        nonsenseWordCount++;</span>
+                    }
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                    if (word.length() &lt;= 3){</span>
+<span class="nc" id="L220">                        smallWordCount++;</span>
+                    }
+                }
+                //Note: this is intended to cause some false positives, the point is to be
+                //a slight troll and waste time. However, it can't be excessive.
+                //Lorum ipsum and other similar sentences should be allowed. can never be
+                //perfect but the aim is to stop easy spam / edge cases
+<span class="nc bnc" id="L227" title="All 4 branches missed.">                if (wordCount &gt; 3 &amp;&amp; smallWordCount &gt; wordCount / 2){</span>
+<span class="nc" id="L228">                    surveyMessage(&quot;Could you be a little more descriptive?&quot;);</span>
+<span class="nc" id="L229">                    answeredCorrectly = false;</span>
+<span class="nc bnc" id="L230" title="All 4 branches missed.">                }else if (wordCount &gt; 3 &amp;&amp; repeatedWordCount &gt; wordCount / 2){</span>
+<span class="nc" id="L231">                    surveyMessage(&quot;You're sounding like a broken record!&quot;);</span>
+<span class="nc" id="L232">                    answeredCorrectly = false;</span>
+<span class="nc bnc" id="L233" title="All 4 branches missed.">                }else if (wordCount &gt; 5 &amp;&amp; nonsenseWordCount &gt; wordCount / 2){</span>
+<span class="nc" id="L234">                    surveyMessage(&quot;Uhh, could you repeat that in English please?&quot;);</span>
+<span class="nc" id="L235">                    answeredCorrectly = false;</span>
+                }
+            }
+<span class="nc" id="L238">        }</span>
+<span class="nc" id="L239">    }</span>
+    private void surveyMessage(String message){
+<span class="nc" id="L241">        JOptionPane.showMessageDialog(null,message);</span>
+<span class="nc" id="L242">    }</span>
+
+    /**
+     * Perform fixed update processing for a goose in the wander state
+     */
+    private void processWander(ProcessData data) {
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        if (magnitudeIsWithin(data.displacementFromTarget, data.goose.detectionRadius)) {</span>
+<span class="fc" id="L249">            enterChase(data.goose);</span>
+<span class="fc" id="L250">            return;</span>
+        }
+
+<span class="fc" id="L253">        var goose = data.goose;</span>
+
+<span class="fc bfc" id="L255" title="All 2 branches covered.">        if (goose.currentWanderWaypoint == null) {</span>
+<span class="fc" id="L256">            goose.currentWanderWaypoint = new Vector2();</span>
+<span class="fc" id="L257">            randomiseWaypoint(goose);</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">        } else if (magnitudeIsWithin(</span>
+<span class="fc" id="L259">            data.transform.position.cpy().sub(goose.currentWanderWaypoint),</span>
+            goose.wanderAcceptDistance
+        )) {
+<span class="fc" id="L262">            randomiseWaypoint(goose);</span>
+        }
+
+<span class="fc" id="L265">        Vector2 direction = new Vector2(goose.currentWanderWaypoint)</span>
+<span class="fc" id="L266">            .sub(data.transform.position)</span>
+<span class="fc" id="L267">            .nor();</span>
+
+<span class="fc" id="L269">        data.physics.body.setLinearVelocity(direction.scl(goose.wanderSpeed));</span>
+<span class="fc" id="L270">    }</span>
+
+    /**
+     * Perform fixed update processing for a goose in the chase state
+     */
+    private void processChase(ProcessData data) {
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">        if (!magnitudeIsWithin(data.displacementFromTarget, data.goose.forgetRadius)) {</span>
+<span class="fc" id="L277">            enterWander(data.goose);</span>
+<span class="fc" id="L278">            return;</span>
+        }
+<span class="nc" id="L280">        Vector2 velocity = new Vector2(data.displacementFromTarget)</span>
+<span class="nc" id="L281">            .nor()</span>
+<span class="nc" id="L282">            .scl(data.goose.chaseSpeed);</span>
+
+<span class="nc" id="L284">        data.physics.body.setLinearVelocity(velocity);</span>
+<span class="nc" id="L285">    }</span>
+
+    /**
+     * Perform fixed update processing for a goose in the retreat state
+     */
+    private void processRetreat(ProcessData data) {
+
+<span class="fc" id="L292">        data.goose.retreatTimeElapsed += data.deltaTime;</span>
+
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        if (data.goose.retreatTimeElapsed &gt; data.goose.retreatTime) {</span>
+<span class="fc" id="L295">            data.interactable.interactionEnabled = true;</span>
+<span class="fc" id="L296">            enterChase(data.goose);</span>
+        }
+
+<span class="fc" id="L299">        Vector2 velocity = new Vector2(data.displacementFromTarget)</span>
+<span class="fc" id="L300">            .nor()</span>
+<span class="fc" id="L301">            .scl(-data.goose.retreatSpeed);</span>
+
+<span class="fc" id="L303">        data.physics.body.setLinearVelocity(velocity);</span>
+<span class="fc" id="L304">    }</span>
+
+    /**
+     * Switches the goose provided to the wander state from whichever state it is currently in
+     */
+    void enterWander(ChaserComponent goose) {
+<span class="fc" id="L310">        goose.state = ChaserComponent.ChaseState.WANDER;</span>
+<span class="fc" id="L311">    }</span>
+
+    /**
+     * Switches the goose provided to the chase state from whichever state it is currently in
+     */
+    void enterChase(ChaserComponent goose) {
+<span class="fc" id="L317">        goose.state = ChaserComponent.ChaseState.CHASE;</span>
+<span class="fc" id="L318">    }</span>
+
+    /**
+     * Switches the goose provided to the retreat state from whichever state it is currently in
+     */
+    void enterRetreat(ChaserComponent goose) {
+<span class="fc" id="L324">        goose.retreatTimeElapsed = 0f;</span>
+<span class="fc" id="L325">        goose.state = ChaserComponent.ChaseState.RETREAT;</span>
+<span class="fc" id="L326">    }</span>
+
+    private boolean magnitudeIsWithin(Vector2 v, float limit) {
+<span class="fc bfc" id="L329" title="All 2 branches covered.">        return v.len2() &lt;= limit * limit;</span>
+    }
+
+    /**
+     * Picks a new waypoint for this goose to walk towards
+     *
+     * @param goose The goose in need of a waypoint
+     */
+    void randomiseWaypoint(ChaserComponent goose) {
+<span class="fc" id="L338">        float dist = (float) Math.sqrt(MathUtils.random()) * goose.wanderRadius;</span>
+
+<span class="fc" id="L340">        goose.currentWanderWaypoint</span>
+<span class="fc" id="L341">            .setToRandomDirection()</span>
+<span class="fc" id="L342">            .scl(dist)</span>
+<span class="fc" id="L343">            .add(goose.homePosition);</span>
+<span class="fc" id="L344">    }</span>
+
+<span class="fc" id="L346">    private record ProcessData(</span>
+        Entity entity,
+        float deltaTime,
+        ChaserComponent goose,
+        TransformComponent transform,
+        PhysicsComponent physics,
+        InteractableComponent interactable,
+        TransformComponent target,
+        Vector2 displacementFromTarget
+    ) {
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

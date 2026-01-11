@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetaGameState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.systems.gameState</a> &gt; <span class="el_source">MetaGameState.java</span></div><h1>MetaGameState.java</h1><pre class="source lang-java linenums">package io.github.maze11.systems.gameState;
+
+import io.github.maze11.messages.AchievementMessage;
+import io.github.maze11.messages.MessagePublisher;
+import io.github.maze11.messages.ToastMessage;
+
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.TreeSet;
+
+/**
+ * Tracks the out-of-game systems e.g. the high scores
+ */
+<span class="nc" id="L14">public class MetaGameState {</span>
+    private static final int MAX_HIGH_SCORES = 5;
+
+<span class="fc" id="L17">    private static final TreeSet&lt;ScoreCard&gt; highScores = new TreeSet&lt;&gt;(Comparator.comparingInt(ScoreCard::totalScore));</span>
+<span class="fc" id="L18">    private static final HashSet&lt;Achievement&gt; achievements = new HashSet&lt;&gt;();</span>
+    public static void addHighScore(ScoreCard score) {
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        if (highScores.size() &lt; MAX_HIGH_SCORES){</span>
+<span class="nc" id="L21">            highScores.add(score);</span>
+        }else{
+<span class="nc" id="L23">            ScoreCard lowest = highScores.first();</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">            if (lowest.totalScore() &lt; score.totalScore()){</span>
+<span class="nc" id="L25">                highScores.remove(lowest);</span>
+<span class="nc" id="L26">                highScores.add(score);</span>
+            }
+        }
+<span class="nc" id="L29">    }</span>
+    public static TreeSet&lt;ScoreCard&gt; getHighScores(){
+<span class="nc" id="L31">        return highScores;</span>
+    }
+    public static void unlockAchievement(Achievement achievement, MessagePublisher messagePublisher){
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (!achievements.contains(achievement)){</span>
+<span class="fc" id="L35">            messagePublisher.publish(new AchievementMessage(&quot;Unlocked achievement: &quot;+achievement.name(),3));</span>
+<span class="fc" id="L36">            achievements.add(achievement);</span>
+        }
+<span class="fc" id="L38">    }</span>
+    public static HashSet&lt;Achievement&gt; getAchievements(){
+<span class="nc" id="L40">        return achievements;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

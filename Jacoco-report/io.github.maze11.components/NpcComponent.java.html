@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NpcComponent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.components</a> &gt; <span class="el_source">NpcComponent.java</span></div><h1>NpcComponent.java</h1><pre class="source lang-java linenums">package io.github.maze11.components;
+
+import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.math.Vector2;
+
+/**
+ * Represents a goose, which wanders aimlessly, but attacks the player if they get too close
+ */
+//TODO: NOT USED AT THE MOMENT.
+<span class="nc" id="L10">public class NpcComponent implements Component {</span>
+    /**
+     * The set of states that the goose can take.
+     * The behaviour of the goose is different in each state.
+     */
+<span class="nc" id="L15">    public enum NpcState {</span>
+<span class="nc" id="L16">        SEARCH, CHASE, RETREAT, TALK, WANDER</span>
+    }
+
+    /**
+     * The animations that the goose can play
+     */
+<span class="nc" id="L22">    public enum NpcAnimState {</span>
+<span class="nc" id="L23">        IDLE_UP,</span>
+<span class="nc" id="L24">        IDLE_RIGHT,</span>
+<span class="nc" id="L25">        IDLE_DOWN,</span>
+<span class="nc" id="L26">        IDLE_LEFT,</span>
+
+<span class="nc" id="L28">        WALK_UP,</span>
+<span class="nc" id="L29">        WALK_RIGHT,</span>
+<span class="nc" id="L30">        WALK_DOWN,</span>
+<span class="nc" id="L31">        WALK_LEFT</span>
+    }
+
+    /** The state machine state the surveyor is in */
+<span class="nc" id="L35">    public NpcState state = NpcState.SEARCH;</span>
+<span class="nc" id="L36">    public NpcAnimState animState = NpcAnimState.IDLE_DOWN;</span>
+
+    /** The speed at which the surveyor moves while chasing the player */
+<span class="nc" id="L39">    public float chaseSpeed = 7f;</span>
+    /** The speed at which the surveyor moves while running from the player */
+<span class="nc" id="L41">    public float retreatSpeed = 7f;</span>
+    /** The speed at which the surveyor moves while wandering or searching*/
+<span class="nc" id="L43">    public float idleSpeed =  2f;</span>
+
+    /** The maximum distance from the home position within which the surveyor chooses a point to wander towards */
+<span class="nc" id="L46">    public float wanderRadius = 3f;</span>
+    /** The distance to the wander destination below which the surveyor picks a new destination */
+<span class="nc" id="L48">    public float wanderAcceptDistance = 0.2f;</span>
+    /** The point towards which the surveyor wanders when in the wander state */
+    public Vector2 currentWanderWaypoint;
+
+    /** The distance to the target below which it begins chasing */
+<span class="nc" id="L53">    public float detectionRadius = 6f;</span>
+    /** If it is chasing and the target goes outside this radius, it stops chasing */
+<span class="nc" id="L55">    public float forgetRadius = 12f;</span>
+
+    /** The time the surveyor retreats for after biting the player */
+<span class="nc" id="L58">    public float retreatTime = 2f;</span>
+    /** How long the surveyor has been retreating for */
+    public float retreatTimeElapsed;
+    /** The position around which the surveyor idles */
+    public Vector2 homePosition;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

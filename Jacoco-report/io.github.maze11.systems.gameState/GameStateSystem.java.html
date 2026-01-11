@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameStateSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.systems.gameState</a> &gt; <span class="el_source">GameStateSystem.java</span></div><h1>GameStateSystem.java</h1><pre class="source lang-java linenums">package io.github.maze11.systems.gameState;
+
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
+
+import io.github.maze11.MazeGame;
+import io.github.maze11.components.TimerComponent;
+import io.github.maze11.messages.Message;
+import io.github.maze11.messages.MessageListener;
+import io.github.maze11.messages.MessagePublisher;
+import io.github.maze11.screens.GameOverScreen;
+import io.github.maze11.screens.WinScreen;
+
+/**
+ * system responsive for managing game state transitions between screens.
+ * listens for game events (timer's expiry, win condition.) and tells MazeGame to switches screen when needed.
+ * When a game-ending condition occurs, it instructs MazeGame to switch to appropriate screen.
+ * Keeps track of any events the numbers of which need to be recorded.
+ */
+public class GameStateSystem extends EntitySystem {
+    private final MessageListener messageListener;
+    private final MazeGame game;
+    private final EventCounter eventCounter;
+    private final Engine engine;
+
+<span class="nc" id="L27">    public GameStateSystem(MessagePublisher messagePublisher, MazeGame game, Engine engine) {</span>
+<span class="nc" id="L28">        this.messageListener = new MessageListener(messagePublisher);</span>
+<span class="nc" id="L29">        this.game = game;</span>
+<span class="nc" id="L30">        this.eventCounter = new EventCounter();</span>
+<span class="nc" id="L31">        this.engine = engine;</span>
+<span class="nc" id="L32">    }</span>
+
+      @Override
+      public void update(float deltaTime) {
+        // process all messages received since last update
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        while (messageListener.hasNext()) {</span>
+<span class="nc" id="L38">            Message msg = messageListener.next();</span>
+<span class="nc" id="L39">            eventCounter.receiveMessage(msg.type);</span>
+
+<span class="nc bnc" id="L41" title="All 4 branches missed.">            switch (msg.type) {</span>
+                // handle timer expiration
+                case TIMER_EXPIRED -&gt; {
+<span class="nc" id="L44">                    System.out.println(&quot;Timer Expired! Switching to Game Over Screen...&quot;);</span>
+<span class="nc" id="L45">                    int totalScore = eventCounter.makeScoreCard(true, 0).totalScore();</span>
+<span class="nc" id="L46">                    game.replaceScreen(new GameOverScreen(game, totalScore));</span>
+<span class="nc" id="L47">                }</span>
+                case EXIT_MAZE -&gt; {
+<span class="nc" id="L49">                    System.out.println(&quot;Maze exit reached! Switching to Win Screen...&quot;);</span>
+<span class="nc" id="L50">                    var scoreCard = eventCounter.makeScoreCard(true, (int) getSecondsRemaining());</span>
+<span class="nc" id="L51">                    game.replaceScreen(new WinScreen(game, scoreCard));</span>
+<span class="nc" id="L52">                }</span>
+                case TIMER_INCREASE -&gt; {
+<span class="nc" id="L54">                    System.out.println(&quot;Message recieved&quot;);</span>
+<span class="nc" id="L55">                    var timers = engine.getEntitiesFor(Family.all(TimerComponent.class).get());</span>
+<span class="nc" id="L56">                    timers.get(0).getComponent(TimerComponent.class).timeRemaining += 10;</span>
+<span class="nc" id="L57">                }</span>
+                default -&gt; {}
+
+            }
+<span class="nc" id="L61">        }</span>
+<span class="nc" id="L62">      }</span>
+    private float getSecondsRemaining(){
+<span class="nc" id="L64">          var timers = engine.getEntitiesFor(Family.all(TimerComponent.class).get());</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">          if (timers.size() != 1){</span>
+<span class="nc" id="L66">              throw new RuntimeException(&quot;There must be exactly one timer in the scene. Found &quot; +  timers.size());</span>
+          }
+<span class="nc" id="L68">          return timers.get(0).getComponent(TimerComponent.class).timeRemaining;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

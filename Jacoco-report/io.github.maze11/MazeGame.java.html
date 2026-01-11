@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MazeGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11</a> &gt; <span class="el_source">MazeGame.java</span></div><h1>MazeGame.java</h1><pre class="source lang-java linenums">package io.github.maze11;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.maze11.assetLoading.AssetLoader;
+import io.github.maze11.screens.MenuScreen;
+import io.github.maze11.systems.gameState.Achievement;
+import io.github.maze11.systems.gameState.MetaGameState;
+import io.github.maze11.systems.gameState.ScoreCard;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+/**
+ * Main game class that manages screen switching and shared resources.
+ * Extends LibGDX Game class which provides screen management via setScreen().
+ *
+ * Each Screen is independent and owns its own resources (fonts, UI, ECS)
+ */
+<span class="nc" id="L22">public class MazeGame extends Game {</span>
+    private SpriteBatch batch;
+    private AssetLoader assetLoader;
+    public static final int PIXELS_TO_UNIT = 32;
+
+    /** Returns the spriteBatch to be used for rendering the game */
+    public SpriteBatch getBatch() {
+<span class="nc" id="L29">        return batch;</span>
+    }
+
+    /** Returns a reference to the AssetLoader which can be used to access all assets */
+<span class="nc" id="L33">    public AssetLoader getAssetLoader() { return assetLoader; }</span>
+
+    /** The screens queued for disposal */
+<span class="nc" id="L36">    private List&lt;Screen&gt; discontinuedScreens = new ArrayList&lt;Screen&gt;();</span>
+<span class="nc" id="L37">    private Stack&lt;Screen&gt; openScreens = new Stack&lt;&gt;();</span>
+
+    @Override
+    public void create() {
+<span class="nc" id="L41">        System.out.println(&quot;Maze game launched&quot;);</span>
+<span class="nc" id="L42">        batch = new SpriteBatch();</span>
+
+<span class="nc" id="L44">        assetLoader = new AssetLoader();</span>
+<span class="nc" id="L45">        assetLoader.load();</span>
+
+<span class="nc" id="L47">        MetaGameState.addHighScore(new ScoreCard(999999999,null,&quot;bob&quot;));</span>
+        //MetaGameState.unlockAchievement(new Achievement(&quot;very long achievement name wow cool haha&quot;,&quot;test&quot;));
+        //MetaGameState.unlockAchievement(new Achievement(&quot;long description test&quot;,&quot;test test test test test test ahohifeiof aefieaiofhia aiohf test test test test test test test test test test test test test test test test test test test test&quot;));
+<span class="nc" id="L50">        openScreen(new MenuScreen(this));</span>
+<span class="nc" id="L51">    }</span>
+
+
+    @Override
+    public void render() {
+<span class="nc" id="L56">        super.render();</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        for (Screen screen : discontinuedScreens) {</span>
+<span class="nc" id="L58">            screen.dispose();</span>
+<span class="nc" id="L59">        }</span>
+<span class="nc" id="L60">        discontinuedScreens.clear();</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="nc" id="L65">        batch.dispose();</span>
+<span class="nc" id="L66">        assetLoader.dispose();</span>
+<span class="nc" id="L67">    }</span>
+
+    /**
+     * Switches out the screen, and the ENTIRE stack of open windows to the new one
+     * and enqueues the old screens for disposal
+     * @param newScreen The screen that will replace all screens
+     */
+    public void replaceScreen(Screen newScreen){
+        //remove and dispose all old screens
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        while (!openScreens.isEmpty()){</span>
+<span class="nc" id="L77">            discontinuedScreens.add(openScreens.pop());</span>
+        }
+<span class="nc" id="L79">        openScreen(newScreen);</span>
+<span class="nc" id="L80">    }</span>
+    /**
+     * Opens a screen 'on top' of already existing screens. When it is closed by calling closeCurrentScreen(), the
+     * screen below it is rendered again. Useful for pause screens, menus, etc. where you might need to go back
+     * to the previous screen, or you want to have a huge amount of sub-windows for some reason.
+     * @param newScreen The new screen to be added on top of a stack which represents the open screens
+     */
+    public void openScreen(Screen newScreen){
+<span class="nc" id="L88">        openScreens.add(newScreen);</span>
+<span class="nc" id="L89">        this.setScreen(newScreen);</span>
+<span class="nc" id="L90">        System.out.println(&quot;Render &quot;+newScreen.toString());</span>
+<span class="nc" id="L91">    }</span>
+    /**
+     * Closes the screen that is currently rendering on the stack of open screens. The screen below it will become
+     * the active screen. If there are no more screens to close, then close the game.
+     */
+    public void closeCurrentScreen(){
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (openScreens.size() &lt;= 1){</span>
+<span class="nc" id="L98">            System.out.println(&quot;No more screens to close, exiting application.&quot;);</span>
+<span class="nc" id="L99">            System.exit(1);</span>
+        }else{
+<span class="nc" id="L101">            Screen topScreen = openScreens.pop();</span>
+<span class="nc" id="L102">            discontinuedScreens.add(topScreen);</span>
+<span class="nc" id="L103">            this.setScreen(openScreens.peek());</span>
+<span class="nc" id="L104">            System.out.println(&quot;Closed &quot;+topScreen.toString());</span>
+        }
+<span class="nc" id="L106">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

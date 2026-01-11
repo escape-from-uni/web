@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AchievementScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">core</a> &gt; <a href="index.source.html" class="el_package">io.github.maze11.screens</a> &gt; <span class="el_source">AchievementScreen.java</span></div><h1>AchievementScreen.java</h1><pre class="source lang-java linenums">package io.github.maze11.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import io.github.maze11.MazeGame;
+import io.github.maze11.systems.gameState.Achievement;
+import io.github.maze11.systems.gameState.MetaGameState;
+
+public class AchievementScreen extends ScrollTableScreen {
+    public AchievementScreen(MazeGame game, String name) {
+<span class="nc" id="L16">        super(game, name);</span>
+<span class="nc" id="L17">    }</span>
+
+    @Override
+    public Table createTableData() {
+<span class="nc" id="L21">        Table table = new Table();</span>
+<span class="nc" id="L22">        Label.LabelStyle headingStyle = new Label.LabelStyle(bodyFont, Color.GOLD);</span>
+<span class="nc" id="L23">        Label.LabelStyle bodyStyle = new Label.LabelStyle(bodyFont, Color.LIGHT_GRAY);</span>
+<span class="nc" id="L24">        NinePatchDrawable cellBackground = new NinePatchDrawable(new NinePatch(new Texture(Gdx.files.internal(&quot;ui/uirect.png&quot;)),12,12,12,12));</span>
+<span class="nc" id="L25">        headingStyle.background = cellBackground;</span>
+<span class="nc" id="L26">        bodyStyle.background = cellBackground;</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (MetaGameState.getHighScores().isEmpty()){</span>
+<span class="nc" id="L28">            new Label(&quot;No Achievements Yet!&quot;, bodyStyle);</span>
+        }else{
+<span class="nc" id="L30">            table.pad(10).add(new Label(&quot;Achievement&quot;, headingStyle)).grow();</span>
+<span class="nc" id="L31">            table.pad(10).add(new Label(&quot;Description&quot;,headingStyle)).grow().row();</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">            for (Achievement achievement : MetaGameState.getAchievements()){</span>
+<span class="nc" id="L33">                Label name = new Label(getWrappedText(achievement.name(),20), bodyStyle);</span>
+<span class="nc" id="L34">                Label desc = new Label(getWrappedText(achievement.description(),50), bodyStyle);</span>
+<span class="nc" id="L35">                table.pad(10).add(name).grow();</span>
+<span class="nc" id="L36">                table.pad(10).add(desc).grow().row();</span>
+<span class="nc" id="L37">            }</span>
+        }
+<span class="nc" id="L39">        table.setWidth(500);</span>
+<span class="nc" id="L40">        return table;</span>
+    }
+
+    /**
+     * Automatically adds newlines to text to stop it from flowing over the screen.
+     * @param unwrapped the unwrapped text
+     * @param width how many characters each line should ideally have
+     * @return text with \n characters inserted between words when the number of characters would exceed width.
+     */
+    private static String getWrappedText(String unwrapped,int width){
+<span class="nc" id="L50">        String[] words = unwrapped.split(&quot;\\s&quot;);</span>
+<span class="nc" id="L51">        StringBuilder splitText = new StringBuilder();</span>
+<span class="nc" id="L52">        int charactersInLine = 0;</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        for (int i = 0; i &lt; words.length; i++) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (charactersInLine + words[i].length() &gt; width){</span>
+<span class="nc" id="L55">                splitText.append(&quot;\n&quot;);</span>
+<span class="nc" id="L56">                charactersInLine = 0;</span>
+            }
+<span class="nc" id="L58">            splitText.append(words[i]);</span>
+<span class="nc" id="L59">            charactersInLine += words[i].length();</span>
+<span class="nc bnc" id="L60" title="All 4 branches missed.">            if (i &lt; words.length - 1 &amp;&amp; charactersInLine != 0){</span>
+<span class="nc" id="L61">                splitText.append(&quot; &quot;);</span>
+            }
+        }
+<span class="nc" id="L64">        return splitText.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
