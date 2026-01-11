@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Mirrored from eng1-c1g11.github.io/key-talking-points.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 11 Jan 2026 14:20:32 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Technical Information | ENG1-C1G11</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Technical Information" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="key-talking-points.html" />
+<meta property="og:url" content="key-talking-points.html" />
+<meta property="og:site_name" content="ENG1-C1G11" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Technical Information" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Technical Information","url":"https://eng1-c1g11.github.io/key-talking-points.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="assets/main.css"><link type="application/atom+xml" rel="alternate" href="feed.xml" title="ENG1-C1G11" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="index.html">ENG1-C1G11</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="index.html">Home Page</a><a class="page-link" href="key-talking-points.html">Technical Information</a><a class="page-link" href="architecture/index.html">Architecture</a><a class="page-link" href="architecture-diagrams/index.html">Architecture Diagrams</a><a class="page-link" href="architecture-previous-version-behaviour-diagram.html">Behaviour Diagram Version History</a><a class="page-link" href="architecture-previous-version-structural-diagrams.html">Structural Diagram Version History</a><a class="page-link" href="crc-card-table.html">CRC Card Tables</a><a class="page-link" href="gantt-chart.html">Gantt Chart</a><a class="page-link" href="weekly-tasks.html">Weekly Tasks</a><a class="page-link" href="diagram-code.html">PlantUML Diagrams</a><a class="page-link" href="support.html">Support</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Technical Information</h1>
+  </header>
+
+  <div class="post-content">
+    <h2 id="our-key-technical-contributions"><strong>Our Key Technical Contributions</strong></h2>
+<p>An overview of our team’s key contributions to Escape from Uni.</p>
+
+<h2 id="codebase-javadoc">Codebase Javadoc</h2>
+<ul>
+  <li><span style="font-size:1em"><a href="assets/javadoc/index.html">Javadoc</a></span></li>
+</ul>
+
+<h2 id="technologies-and-tools-used"><strong>Technologies and Tools Used</strong></h2>
+
+<p>Our game was developed using:</p>
+<ul>
+  <li><strong>Language:</strong> Java 17</li>
+  <li><strong>Game Framework:</strong> LibGDX</li>
+  <li><strong>Architecture:</strong> Entity-Component-System (ECS)</li>
+  <li><strong>Physics Engine:</strong> Box2D (via LibGDX)</li>
+  <li><strong>Map Editor:</strong> Tiled</li>
+  <li><strong>Build System:</strong> Gradle</li>
+  <li><strong>Version Control:</strong> Git &amp; GitHub</li>
+  <li><strong>Documentation:</strong> Javadoc</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Description</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Debugging Tools</strong></td>
+      <td>Collision debugger for finding and fixing issues quickly</td>
+      <td><a href="architecture/index.html#debugging-tools">View</a></td>
+    </tr>
+    <tr>
+      <td><strong>Generalised Rendering System</strong></td>
+      <td>Rendering system works for all levels and objects</td>
+      <td><a href="architecture/index.html#rendering-system">View</a></td>
+    </tr>
+    <tr>
+      <td><strong>Editor (Drag-and-Drop)</strong></td>
+      <td>Allows users to place objects such as collectables and enemies directly into levels via drag-and-drop</td>
+      <td><a href="architecture/index.html#editor">View</a></td>
+    </tr>
+    <tr>
+      <td><strong>Easily Testable Code</strong></td>
+      <td>Modular code to make testing simple</td>
+      <td><a href="architecture/index.html#testability">View</a></td>
+    </tr>
+    <tr>
+      <td><strong>Extreme Decoupling</strong></td>
+      <td>Easy to update due to clean separation between systems, providing flexibility and easy extension</td>
+      <td><a href="architecture/index.html#modularity-extreme-decoupling">View</a></td>
+    </tr>
+    <tr>
+      <td><strong>Reusable Player-Entity Interaction System</strong></td>
+      <td>Handles interactions between the player and entities such as collectables, enemies, and triggers</td>
+      <td><a href="architecture/index.html#interaction-system">View</a></td>
+    </tr>
+    <tr>
+      <td><strong>Centralised Asset Management System</strong></td>
+      <td>Automatically loads assets and separates file paths from code for easier access and maintenance</td>
+      <td><a href="architecture/index.html#assets">View</a></td>
+    </tr>
+    <tr>
+      <td><strong>Fixed Time-Step Engine</strong></td>
+      <td>Ensures consistent performance on all devices</td>
+      <td><a href="architecture/index.html#fixed-time-step-engine">View</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="relation-to-requirements"><strong>Relation to Requirements</strong></h2>
+
+<p>This section demonstrates how the implemented systems, components, and features satisfy the defined requirements.<br />
+Each Functional Requirement (FR) is traced to its corresponding User Requirement (UR) and implemented element in the game.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Requirement ID</strong></th>
+      <th><strong>Description</strong></th>
+      <th><strong>Implementation / Supporting Systems</strong></th>
+      <th><strong>Linked User Requirement(s)</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>FR_MAZE</strong></td>
+      <td>The system shall generate a university-themed maze that the player must escape from.</td>
+      <td>Level layout created using Tiled; loaded and rendered through <code class="language-plaintext highlighter-rouge">AssetLoader</code>, <code class="language-plaintext highlighter-rouge">RenderingSystem</code>, and <code class="language-plaintext highlighter-rouge">LevelScreen</code>.</td>
+      <td>UR_ESCAPE_MAZE, UR_THEME</td>
+    </tr>
+    <tr>
+      <td><strong>FR_WAY_OUT</strong></td>
+      <td>The system shall provide an exit point to escape the maze.</td>
+      <td>Exit tile and trigger area handled by <code class="language-plaintext highlighter-rouge">InteractableSystem</code>; triggers game completion via <code class="language-plaintext highlighter-rouge">GameStateSystem</code>.</td>
+      <td>UR_ESCAPE_MAZE</td>
+    </tr>
+    <tr>
+      <td><strong>FR_TIMER</strong></td>
+      <td>The system shall provide a timer that tracks playtime and enforces a 5-minute time limit.</td>
+      <td><code class="language-plaintext highlighter-rouge">TimerSystem</code> and <code class="language-plaintext highlighter-rouge">TimerComponent</code> track countdown; integrated into HUD and triggers <code class="language-plaintext highlighter-rouge">GameOverScreen</code> when expired.</td>
+      <td>UR_TIME_LIMIT</td>
+    </tr>
+    <tr>
+      <td><strong>FR_END_GAME</strong></td>
+      <td>The system shall end the game when the player escapes, is caught by the dean, or the timer expires.</td>
+      <td><code class="language-plaintext highlighter-rouge">GameStateSystem</code> manages transitions to <code class="language-plaintext highlighter-rouge">WinScreen</code> or <code class="language-plaintext highlighter-rouge">GameOverScreen</code>; <code class="language-plaintext highlighter-rouge">GooseSystem</code> triggers loss via <code class="language-plaintext highlighter-rouge">GooseBiteMessage</code>.</td>
+      <td>UR_ESCAPE_MAZE, UR_DEAN</td>
+    </tr>
+    <tr>
+      <td><strong>FR_PAUSE</strong></td>
+      <td>The system shall fully pause all gameplay when the player pauses the game.</td>
+      <td><code class="language-plaintext highlighter-rouge">GameStateSystem</code> halts updates; menus handled by <code class="language-plaintext highlighter-rouge">MenuScreen</code>.</td>
+      <td>UR_PAUSE</td>
+    </tr>
+    <tr>
+      <td><strong>FR_PAUSE_MENU</strong></td>
+      <td>The system shall display a pause menu with appropriate options.</td>
+      <td><code class="language-plaintext highlighter-rouge">MenuScreen</code> and <code class="language-plaintext highlighter-rouge">BaseMenuScreen</code> provide UI overlays and resume options.</td>
+      <td>UR_UI, UR_PAUSE</td>
+    </tr>
+    <tr>
+      <td><strong>FR_POSITIVE_EVENTS</strong></td>
+      <td>The system shall include visible events that provide beneficial effects.</td>
+      <td>Coffee collectables grant buffs and score boosts via <code class="language-plaintext highlighter-rouge">InteractableSystem</code> and <code class="language-plaintext highlighter-rouge">CoffeeCollectMessage</code>.</td>
+      <td>UR_POSITIVE_EVENTS</td>
+    </tr>
+    <tr>
+      <td><strong>FR_NEGATIVE_EVENTS</strong></td>
+      <td>The system shall include visible events that hinder progress.</td>
+      <td>Goose enemy entities damage or chase the player through <code class="language-plaintext highlighter-rouge">GooseSystem</code> and <code class="language-plaintext highlighter-rouge">GooseBiteMessage</code>.</td>
+      <td>UR_NEGATIVE_EVENTS</td>
+    </tr>
+    <tr>
+      <td><strong>FR_HIDDEN_EVENTS</strong></td>
+      <td>The system shall include hidden events that alter the game.</td>
+      <td>Pressure plates reveal or open walls using <code class="language-plaintext highlighter-rouge">HiddenWallSystem</code> and <code class="language-plaintext highlighter-rouge">PressurePlateTriggerMessage</code>.</td>
+      <td>UR_HIDDEN_EVENTS</td>
+    </tr>
+    <tr>
+      <td><strong>FR_EVENT_TRACKER</strong></td>
+      <td>The system shall include counters that track triggered events.</td>
+      <td><code class="language-plaintext highlighter-rouge">EventCounter</code> tallies collected, triggered, and hidden events; data displayed in the HUD.</td>
+      <td>UR_POSITIVE_EVENTS, UR_NEGATIVE_EVENTS, UR_HIDDEN_EVENTS</td>
+    </tr>
+    <tr>
+      <td><strong>FR_SCORE</strong></td>
+      <td>The system shall calculate the player’s score based on time and events.</td>
+      <td><code class="language-plaintext highlighter-rouge">ScoreCard</code> integrates with <code class="language-plaintext highlighter-rouge">EventCounter</code> and <code class="language-plaintext highlighter-rouge">TimerSystem</code> to calculate total score; displayed on <code class="language-plaintext highlighter-rouge">WinScreen</code>.</td>
+      <td>UR_SCORE</td>
+    </tr>
+    <tr>
+      <td><strong>FR_BOUNDARIES</strong></td>
+      <td>The system shall enforce boundaries that the player cannot cross.</td>
+      <td>Box2D colliders defined in the Tiled map; enforced by <code class="language-plaintext highlighter-rouge">PhysicsSystem</code> and <code class="language-plaintext highlighter-rouge">CollisionConverter</code>.</td>
+      <td>UR_BOUNDARIES</td>
+    </tr>
+    <tr>
+      <td><strong>FR_THEME</strong></td>
+      <td>The system shall simulate a university-like environment with appropriate scenery.</td>
+      <td>Assets provided via <code class="language-plaintext highlighter-rouge">AssetLoader</code> and <code class="language-plaintext highlighter-rouge">AssetPaths</code>; university buildings, desks, and halls in Tiled maps.</td>
+      <td>UR_THEME</td>
+    </tr>
+    <tr>
+      <td><strong>FR_DIFFICULTY</strong></td>
+      <td>The system shall provide a base difficulty with pausing always enabled.</td>
+      <td>Adjustable gameplay parameters in <code class="language-plaintext highlighter-rouge">GameStateSystem</code> (enemy speed, timer length).</td>
+      <td>UR_DIFFICULTY</td>
+    </tr>
+    <tr>
+      <td><strong>FR_DO_NOT_SAVE</strong></td>
+      <td>The system shall not save progress after completion.</td>
+      <td>Game state reset on restart; no persistence layer implemented.</td>
+      <td>UR_DO_NOT_SAVE</td>
+    </tr>
+    <tr>
+      <td><strong>FR_DEAN</strong></td>
+      <td>The system shall display and control a dean character that the player must avoid.</td>
+      <td>Represented conceptually by <code class="language-plaintext highlighter-rouge">GooseSystem</code> (enemy AI); further dean NPC possible for extension.</td>
+      <td>UR_DEAN</td>
+    </tr>
+    <tr>
+      <td><strong>FR_EVENT_AMOUNTS</strong></td>
+      <td>The system shall include required minimum numbers of events.</td>
+      <td>Validated through event spawning logic and object placement in Tiled map.</td>
+      <td>UR_POSITIVE_EVENTS, UR_NEGATIVE_EVENTS, UR_HIDDEN_EVENTS</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="testing-and-validation"><strong>Testing and Validation</strong></h2>
+
+<p>Our testing approach combined manual playtesting with automated verification of core systems:</p>
+<ul>
+  <li><strong>Unit testing:</strong> TimerSystem, EventCounter, and PhysicsSyncSystem verified for correct behaviour.</li>
+  <li><strong>Debug tools:</strong> In-game collision visualiser helped confirm accurate physics and interactions.</li>
+  <li><strong>Playtesting:</strong> Conducted across multiple devices to ensure consistent frame timing (verifying Fixed Time-Step Engine).</li>
+  <li><strong>Peer reviews:</strong> Code reviewed via GitHub pull requests before merging into main.</li>
+</ul>
+
+<h2 id="performance"><strong>Performance</strong></h2>
+
+<ul>
+  <li><strong>Frame Consistency:</strong> FixedStepSystem ensures stable updates across devices regardless of framerate.</li>
+  <li><strong>Memory Efficiency:</strong> Component-based ECS avoids large inheritance chains, minimising memory overhead.</li>
+  <li><strong>Deployment:</strong> Packaged into a runnable JAR and prepared for Web export using LibGDX’s HTML backend.</li>
+  <li><strong>Optimisation:</strong> Unused entities and Box2D bodies automatically destroyed via SafeBodyDestroy to prevent leaks.</li>
+</ul>
+
+<blockquote>
+  <p>For detailed class and system diagrams, see our <a href="architecture-diagrams/index.html">Architecture Diagrams</a>.</p>
+</blockquote>
+
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="index.html"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ENG1-C1G11</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ENG1-C1G11</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+
+<!-- Mirrored from eng1-c1g11.github.io/key-talking-points.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 11 Jan 2026 14:20:41 GMT -->
+</html>
